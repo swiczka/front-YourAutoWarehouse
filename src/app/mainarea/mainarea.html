@@ -1,0 +1,28 @@
+<div class="controls">
+    <label>
+        Szerokość (X):
+        <input type="number" [value]="sizeX()" (input)="sizeX.set(getCorrectSize(xInput.valueAsNumber || this.minSize))" #xInput>
+    </label>
+    <label>
+        Wysokość (Y):
+        <input type="number" [value]="sizeY()" (input)="sizeY.set(getCorrectSize(yInput.valueAsNumber || this.minSize))" #yInput>
+    </label>
+</div>
+
+<div class="warehouse-container">
+    <div class="warehouse-grid" 
+         [style.width.px]="gridWidthPx()" 
+         [style.height.px]="gridHeightPx()">
+         
+        <!-- Garaż wózków widłowych (Forklift Garage) -->
+        <div class="forklift-garage">
+            Garaż
+        </div>
+        <div class="delivery-zone">
+            Dostawy
+        </div>
+        <div class="sending-zone">
+            Wydania
+        </div>
+    </div>
+</div>

@@ -1,11 +1,18 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Mainarea } from './mainarea/mainarea';
+import { Header } from './components/header/header';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.scss'
+  imports: [RouterOutlet, Mainarea, Header],
+  template: `
+    <app-header/>
+    <main>
+      <app-mainarea/>
+    </main>
+  `,
+  styleUrl: './app.scss',
 })
 export class App {
   protected readonly title = signal('front-YourAutoWarehouse');
