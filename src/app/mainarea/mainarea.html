@@ -1,12 +1,15 @@
 <div class="controls">
     <label>
         Szerokość (X):
-        <input type="number" [value]="sizeX()" (input)="sizeX.set(getCorrectSize(xInput.valueAsNumber || this.minSize))" #xInput>
+        <input type="number" [disabled]="!editModeEnabled()" [value]="sizeX()" (input)="sizeX.set(getCorrectSize(xInput.valueAsNumber || this.minSize))" #xInput>
     </label>
     <label>
         Wysokość (Y):
-        <input type="number" [value]="sizeY()" (input)="sizeY.set(getCorrectSize(yInput.valueAsNumber || this.minSize))" #yInput>
+        <input type="number" [disabled]="!editModeEnabled()" [value]="sizeY()" (input)="sizeY.set(getCorrectSize(yInput.valueAsNumber || this.minSize))" #yInput>
     </label>
+    <button (click)="editModeToggle()">
+        {{editModeEnabled() ? 'Zatwierdź' : 'Włącz tryb edycji'}}
+    </button>
 </div>
 
 <div class="warehouse-container">
@@ -14,6 +17,16 @@
          [style.width.px]="gridWidthPx()" 
          [style.height.px]="gridHeightPx()">
          
+        <!-- Renderujemy wszystkie komórki za pomocą pętli @for -->
+        @for (cell of cells(); track cell.coordinate.x + '-' + cell.coordinate.y) {
+            <app-gridcell 
+                [coordinate]="cell.coordinate" 
+                [allowedBranchings]="cell.allowedBranchings"
+                [selected]="cell.selected"
+                (expandRequest)="handleGridExpansion($event)">
+            </app-gridcell>
+        }
+
         <!-- Garaż wózków widłowych (Forklift Garage) -->
         <div class="forklift-garage">
             Garaż
@@ -25,4 +38,7 @@
             Wydania
         </div>
     </div>
+</div>
+<div>
+    <button>Droga w prawo</button>
 </div>
