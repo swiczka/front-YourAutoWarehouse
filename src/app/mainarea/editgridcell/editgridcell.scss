@@ -1,0 +1,59 @@
+:host {
+    position: absolute;
+    width: var(--edit-grid-cell-size);
+    height: var(--edit-grid-cell-size);
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+
+    &.is-selected {
+        background-color: rgb(187, 187, 187);
+    }
+}
+
+.direction-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    
+    line-height: 1;
+    
+    background-color: #997d5fac;
+    color: white;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    z-index: 100;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #695744;
+    }
+}
+
+.go-up{
+    position: absolute;
+    top: -10px;
+}
+
+.go-down{
+    position: absolute;
+    bottom: -10px;
+}
+
+.go-left{
+    position: absolute;
+    left: -10px;
+}
+
+.go-right{
+    position: absolute;
+    right: -10px;
+}

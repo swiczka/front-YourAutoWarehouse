@@ -2,6 +2,9 @@
     margin-bottom: 20px;
     display: flex;
     gap: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 10px;
 
     label {
         display: flex;
@@ -13,6 +16,7 @@
     input {
         padding: 8px;
         border: 1px solid #ccc;
+        background-color: white;
         border-radius: 4px;
         width: 100px;
     }
@@ -30,28 +34,36 @@
     margin: 0 auto; /* Klasyczny sposób na środek bez psucia scrollowania! */
     background-color: white;
     border: 2px dashed #999;
-    background-size: 50px 50px;
+    /* Używamy zmiennej zamiast sztywnych 50px */
+    background-size: var(--grid-cell-size) var(--grid-cell-size);
     display: flex;
     transition: width 0.1s, height 0.1s;
     position: relative; 
 
     p {
         background-color: rgba(255, 255, 255, 0.8);
-        padding: 4px 8px;
+            padding: 4px 8px;
         border-radius: 4px;
         font-weight: bold;
         color: #333;
     }
 }
+
+.confirm-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+
+}
+
 .forklift-garage {
-    /* Pozycjonowanie absolutne wyciąga element z normalnego ułożenia */
     position: absolute;
-    /* Przyklejamy do lewej krawędzi, ale WYSUWAMY w lewo o 100px (szerokość garażu) */
-    left: -100px; 
-    bottom: 0; /* Zaczynamy od samego dołu siatki (kratka 0,0 i ta nad nią) */
+    /* Szerokość to 2 kratki, więc w lewo też o 2 kratki */
+    left: calc(var(--grid-cell-size) * -2); 
+    bottom: 0; 
     
-    width: 98px; /* Szerokość na 2 kratki */
-    height: 48px; /* Wysokość na 2 kratki */
+    width: calc(var(--grid-cell-size) * 2 - 2px);
+    height: calc(var(--grid-cell-size) * 2 - 2px);
     
     background-color: #ffcc00;
     border: 2px solid #b38f00;
@@ -66,14 +78,12 @@
 }
 
 .delivery-zone {
-    /* Pozycjonowanie absolutne wyciąga element z normalnego ułożenia */
     position: absolute;
-    /* Przyklejamy do lewej krawędzi, ale WYSUWAMY w lewo o 100px (szerokość garażu) */
-    left: -100px; 
-    top: 0; /* Zaczynamy od samego dołu siatki (kratka 0,0 i ta nad nią) */
+    left: calc(var(--grid-cell-size) * -2); 
+    top: 0; 
     
-    width: 98px; /* Szerokość na 2 kratki */
-    height: 48px; /* Wysokość na 2 kratki */
+    width: calc(var(--grid-cell-size) * 2 - 2px);
+    height: calc(var(--grid-cell-size) * 2 - 2px);
     
     background-color: #84a5e7;
     border: 2px solid #5e75a3;
@@ -88,13 +98,13 @@
 }
 
 .sending-zone {
-    /* Pozycjonowanie absolutne wyciąga element z normalnego ułożenia */
     position: absolute;
-    right: -100px; 
+    /* Przesunięcie w prawo o 2 kratki od prawej krawędzi to po prostu right: -2 kratki */
+    right: calc(var(--grid-cell-size) * -2); 
     top: 0; 
     
-    width: 98px;
-    height: 48px; 
+    width: calc(var(--grid-cell-size) * 2 - 2px);
+    height: calc(var(--grid-cell-size) * 2 - 2px); 
     
     background-color: #93e784;
     border: 2px solid #6ca35e;

@@ -8,7 +8,7 @@
         <input type="number" [disabled]="!editModeEnabled()" [value]="sizeY()" (input)="sizeY.set(getCorrectSize(yInput.valueAsNumber || this.minSize))" #yInput>
     </label>
     <button (click)="editModeToggle()">
-        {{editModeEnabled() ? 'Zatwierdź' : 'Włącz tryb edycji'}}
+        {{editModeEnabled() ? 'Zatwierdź' : 'Odblokuj zmianę rozmiaru'}}
     </button>
 </div>
 
@@ -18,14 +18,28 @@
          [style.height.px]="gridHeightPx()">
          
         <!-- Renderujemy wszystkie komórki za pomocą pętli @for -->
-        @for (cell of cells(); track cell.coordinate.x + '-' + cell.coordinate.y) {
-            <app-gridcell 
+        @if(drawingModeEnabled()){
+            @for (cell of drawingCells(); track cell.coordinate.x + '-' + cell.coordinate.y) {
+            <app-editgridcell 
                 [coordinate]="cell.coordinate" 
                 [allowedBranchings]="cell.allowedBranchings"
                 [selected]="cell.selected"
                 (expandRequest)="handleGridExpansion($event)">
-            </app-gridcell>
+            </app-editgridcell>
+            }
         }
+        @else {
+            @for (cell of cells().values(); track cell.coordinates.x + '-' + cell.coordinates.y) {
+            <app-gridcell 
+                [coordinate]="cell.coordinates" 
+                [allowedDirections]="cell.allowedDirections"
+                [selected]="cell.selected"
+                [isShelf]="cell.isShelf">
+            </app-gridcell>
+            }
+        }
+        
+        
 
         <!-- Garaż wózków widłowych (Forklift Garage) -->
         <div class="forklift-garage">
@@ -37,8 +51,10 @@
         <div class="sending-zone">
             Wydania
         </div>
+        
+    </div>
+    <div class="confirm-button">
+        <button (click)="confirmLayout()">Zatwierdź siatkę</button>
     </div>
 </div>
-<div>
-    <button>Droga w prawo</button>
-</div>
+

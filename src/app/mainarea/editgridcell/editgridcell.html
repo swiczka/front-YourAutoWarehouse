@@ -1,0 +1,15 @@
+ <p>{{coordinate().x}}, {{coordinate().y}}</p> <!-- temporary -->
+
+@if(allowedBranchings().includes(Direction.UP)){
+    <button class="direction-button go-up" (click)="go(Direction.UP)">↑</button>
+}
+@if(allowedBranchings().includes(Direction.DOWN)){
+    <button class="direction-button go-down" (click)="go(Direction.DOWN)">↓</button>
+}
+@if(allowedBranchings().includes(Direction.LEFT)){
+    <button class="direction-button go-left" (click)="go(Direction.LEFT)">←</button>
+}
+@if(allowedBranchings().includes(Direction.RIGHT)){
+    <button class="direction-button go-right" (click)="go(Direction.RIGHT)">→</button>
+}
+ 
