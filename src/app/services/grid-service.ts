@@ -57,7 +57,7 @@ export class GridService {
 
                     const shouldBeShelf = !!(topCell?.selected || downCell?.selected || leftCell?.selected || rightCell?.selected);
            
-                    this.cells.update( map => {
+                    this.cells.update( map => { //TODO optimize !!!
                         return new Map(map).set(coordsKey, {
                             coordinates: {x, y},
                             allowedDirections: new Set(),

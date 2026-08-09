@@ -16,6 +16,7 @@ export interface CellData {
   selected: boolean;
 }
 
+// important - works only with full grid 
 export function getCell(x: number, y: number, cells: CellData[], sizeX: number, sizeY: number) {
     if (x < 0 || x >= sizeX || y < 0 || y >= sizeY) {
         return undefined;

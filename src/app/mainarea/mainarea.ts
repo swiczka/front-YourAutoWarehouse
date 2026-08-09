@@ -5,6 +5,7 @@ import { EditGridService } from '../services/edit-grid-service';
 import { GRID_CONFIG } from '../config/grid.config';
 import { GridService } from '../services/grid-service';
 import { Gridcell } from './gridcell/gridcell';
+import { LayoutServiceApi } from '../api-services/layout-service-api';
 
 @Component({
   selector: 'app-mainarea',
@@ -16,6 +17,7 @@ export class Mainarea implements OnInit{
 
   private editGridService = inject(EditGridService);
   private gridService = inject(GridService)
+  private layoutServiceApi = inject(LayoutServiceApi);
 
   sizeX = signal(7); //this size refers to DRAWING MODE sizes!
   sizeY = signal(7); //this size refers to DRAWING MODE sizes!
@@ -57,5 +59,6 @@ export class Mainarea implements OnInit{
     if(!this.gridService.setLayout(this.sizeX(), this.sizeY(), this.drawingCells())){
       this.drawingModeEnabled.set(false);
     }
+    const resp = this.layoutServiceApi.postNewLayout(this.gridService.cells());
   }
 }
