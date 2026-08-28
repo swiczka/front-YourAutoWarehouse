@@ -1,5 +1,6 @@
 import { input, Service, signal } from '@angular/core';
 import { CellData, Coordinate, Corner, Direction, getCell, GridCellData } from '../helpers/grid.helpers';
+import { LayoutDto } from '../dto/LayoutDto';
 
 const DIRECTIONS_CELL_UP : Record<Corner, Direction> = {
     "lu": Direction.DOWN,
@@ -36,38 +37,65 @@ export class GridService {
 
     cells = signal<Map<string, GridCellData>>(new Map());
 
+    setDataFromServer(dto: LayoutDto){
+        let maxX = 0;
+        let maxY = 0;
+
+        const newMap = new Map<string, GridCellData>();
+
+        for(const cell of dto.gridData){
+            if (cell.coordinates.x > maxX) maxX = cell.coordinates.x;
+            if (cell.coordinates.y > maxY) maxY = cell.coordinates.y;
+
+            newMap.set(this.getCoordKey(cell.coordinates), {
+                coordinates: cell.coordinates,
+                allowedDirections: new Set(cell.allowedDirections),
+                isRoad: cell.isRoad,
+                isShelf: cell.isShelf
+            });
+        }
+
+        this.sizeX.set(maxX + 1);
+        this.sizeY.set(maxY + 1);
+        this.cells.set(newMap);
+    }
+
     setLayout(editSizeX: number, editSizeY: number, cells: CellData[]){
 
         this.sizeX.set(editSizeX * 2);
         this.sizeY.set(editSizeY * 2);
 
+        this.cells.set(new Map());
+
         const allowedCellsDirections = this.getCellsWithAllowedDirections(editSizeX, editSizeY, cells);
         this.getNewGridWithDirections(allowedCellsDirections); //modifies content od this.cells map
+
+        const newMap = new Map(this.cells());
 
         for(let y = 0; y < this.sizeY(); y++){
             for(let x = 0; x < this.sizeX(); x++){
                 const coordsKey = this.getCoordKey({x: x, y: y});
                 
-                if(!this.cells().has(coordsKey)){ //checking if given coord is a path (already analyzed so any element in cells should be road)
-                    //checking if there is any neighbouring path - if there is one - make it shelf
-                    const topCell = this.cells().get(this.getCoordKey({x: x, y: y + 1}));
-                    const downCell = this.cells().get(this.getCoordKey({x: x, y: y - 1}));
-                    const leftCell = this.cells().get(this.getCoordKey({x: x - 1, y: y}));
-                    const rightCell = this.cells().get(this.getCoordKey({x: x + 1, y: y}));
+                if(!newMap.has(coordsKey)){ //checking if given coord is a path
+                    const topCell = newMap.get(this.getCoordKey({x: x, y: y + 1}));
+                    const downCell = newMap.get(this.getCoordKey({x: x, y: y - 1}));
+                    const leftCell = newMap.get(this.getCoordKey({x: x - 1, y: y}));
+                    const rightCell = newMap.get(this.getCoordKey({x: x + 1, y: y}));
 
-                    const shouldBeShelf = !!(topCell?.selected || downCell?.selected || leftCell?.selected || rightCell?.selected);
+                    const shouldBeShelf = !!(topCell?.isRoad || downCell?.isRoad || leftCell?.isRoad || rightCell?.isRoad);
            
-                    this.cells.update( map => { //TODO optimize !!!
-                        return new Map(map).set(coordsKey, {
-                            coordinates: {x, y},
-                            allowedDirections: new Set(),
-                            selected: false,
-                            isShelf: shouldBeShelf
-                        });
+                    newMap.set(coordsKey, {
+                        coordinates: {x, y},
+                        allowedDirections: new Set(),
+                        isRoad: false,
+                        isShelf: shouldBeShelf
                     });
                 }
             }
         }
+        
+        this.cells.set(newMap);
+        
         return 0;
 
     }
@@ -76,8 +104,8 @@ export class GridService {
 
         const cellDirectionsMap = new Map<string, GridCellData>();
 
-        for(let y = 0; y < editSizeX; y++){
-            for(let x = 0; x < editSizeY; x++){
+        for(let y = 0; y < editSizeY; y++){
+            for(let x = 0; x < editSizeX; x++){
                 const cell = getCell(x, y, cells, editSizeX, editSizeY);
                 //checking if cell is selected - if it is - check allowed directions
                 if(!cell || !cell?.selected){
@@ -106,7 +134,7 @@ export class GridService {
                 cellDirectionsMap.set(this.getCoordKey(cell?.coordinate), {
                     coordinates: cell?.coordinate,
                     allowedDirections: allowedDirections,
-                    selected: cell?.selected,
+                    isRoad: cell?.selected,
                     isShelf: false
                 });
               
@@ -120,13 +148,15 @@ export class GridService {
                 return false;
             }
             const analyzedCell = cells.get(this.getCoordKey({x: x, y: y}));
-            if(!analyzedCell || (!analyzedCell?.selected && !analyzedCell?.isShelf)){
+            if(!analyzedCell || (!analyzedCell?.isRoad && !analyzedCell?.isShelf)){
                 return true;
             }
             return false;
         }
 
     private getNewGridWithDirections(cellDirectionsMap: Map<string, GridCellData>){
+        const newMap = new Map(this.cells());
+
         for(let [coordKey, gridCellData] of cellDirectionsMap){
             const allowedLUDirections = new Set<Direction>;
             const allowedLBDirections = new Set<Direction>;
@@ -159,37 +189,39 @@ export class GridService {
             }
 
             const luCoords = this.getNewCoords(this.getCoordFromKey(coordKey), 'lu');
-            this.cells.update(map => new Map(map).set(this.getCoordKey(luCoords), {
+            newMap.set(this.getCoordKey(luCoords), {
                 coordinates: luCoords,
                 allowedDirections: allowedLUDirections,
-                selected: gridCellData.selected,
+                isRoad: gridCellData.isRoad,
                 isShelf: false
-            }));
+            });
 
             const lbCoords = this.getNewCoords(this.getCoordFromKey(coordKey), 'lb');
-            this.cells.update(map => new Map(map).set(this.getCoordKey(lbCoords), {
+            newMap.set(this.getCoordKey(lbCoords), {
                 coordinates: lbCoords,
                 allowedDirections: allowedLBDirections,
-                selected: gridCellData.selected,
+                isRoad: gridCellData.isRoad,
                 isShelf: false
-            }));
+            });
 
             const ruCoords = this.getNewCoords(this.getCoordFromKey(coordKey), 'ru');
-            this.cells.update(map => new Map(map).set(this.getCoordKey(ruCoords), {
+            newMap.set(this.getCoordKey(ruCoords), {
                 coordinates: ruCoords,
                 allowedDirections: allowedRUDirections,
-                selected: gridCellData.selected,
+                isRoad: gridCellData.isRoad,
                 isShelf: false
-            }));
+            });
 
             const rbCoords = this.getNewCoords(this.getCoordFromKey(coordKey), 'rb');
-            this.cells.update(map => new Map(map).set(this.getCoordKey(rbCoords), {
+            newMap.set(this.getCoordKey(rbCoords), {
                 coordinates: rbCoords,
                 allowedDirections: allowedRBDirections,
-                selected: gridCellData.selected,
+                isRoad: gridCellData.isRoad,
                 isShelf: false
-            }));
+            });
         }
+        
+        this.cells.set(newMap);
         return;
     }
 

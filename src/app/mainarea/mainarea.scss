@@ -1,10 +1,20 @@
 .controls {
     margin-bottom: 20px;
     display: flex;
+    justify-content: space-between; /* Rozsuwa wewnętrzne divy na lewo i prawo */
+    align-items: center;
     gap: 20px;
+
     background-color: #f5f5f5;
     border-radius: 8px;
-    padding: 10px;
+    padding: 15px 20px;
+
+    /* Wyłapujemy bezpośrednie divy (lewą i prawą grupę) i robimy z nich wiersze */
+    > div {
+        display: flex;
+        align-items: flex-end; /* Żeby guziki wyrównały się dołem z inputami */
+        gap: 20px; /* Odstęp między inputami a guzikiem wewnątrz grupy */
+    }
 
     label {
         display: flex;

@@ -1,15 +1,32 @@
 <div class="controls">
-    <label>
-        Szerokość (X):
-        <input type="number" [disabled]="!editModeEnabled()" [value]="sizeX()" (input)="sizeX.set(getCorrectSize(xInput.valueAsNumber || this.minSize))" #xInput>
-    </label>
-    <label>
-        Wysokość (Y):
-        <input type="number" [disabled]="!editModeEnabled()" [value]="sizeY()" (input)="sizeY.set(getCorrectSize(yInput.valueAsNumber || this.minSize))" #yInput>
-    </label>
-    <button (click)="editModeToggle()">
-        {{editModeEnabled() ? 'Zatwierdź' : 'Odblokuj zmianę rozmiaru'}}
-    </button>
+    <div>    
+        <label>
+            Szerokość (X):
+            <input type="number" [disabled]="!editModeEnabled()" [value]="sizeX()" (input)="sizeX.set(getCorrectSize(xInput.valueAsNumber || this.minSize))" #xInput>
+        </label>
+        <label>
+            Wysokość (Y):
+            <input type="number" [disabled]="!editModeEnabled()" [value]="sizeY()" (input)="sizeY.set(getCorrectSize(yInput.valueAsNumber || this.minSize))" #yInput>
+        </label>
+        <button (click)="editModeToggle()">
+            {{editModeEnabled() ? 'Zatwierdź' : 'Odblokuj zmianę rozmiaru'}}
+        </button>
+    </div>
+    @if(layoutPresent()){
+    <div>
+        <label>
+            Liczba wózków:
+            <input type="number" [min]="minForklift" [max]="maxForklift" [defaultValue]="draftForkliftNumber()" [value]="draftForkliftNumber()" (input)="draftForkliftNumber.set(getCorrectForkliftNumber(forkliftInput.valueAsNumber || this.minForklift))" #forkliftInput>
+        </label>
+        <button (click)="confirmForkliftNumber()">
+            Zatwierdź
+        </button>
+        <button (click)="revertForkliftNumber()">
+            Cofnij zmiany
+        </button>
+    </div>
+    }
+   
 </div>
 
 <div class="warehouse-container">
@@ -33,7 +50,7 @@
             <app-gridcell 
                 [coordinate]="cell.coordinates" 
                 [allowedDirections]="cell.allowedDirections"
-                [selected]="cell.selected"
+                [isRoad]="cell.isRoad"
                 [isShelf]="cell.isShelf">
             </app-gridcell>
             }

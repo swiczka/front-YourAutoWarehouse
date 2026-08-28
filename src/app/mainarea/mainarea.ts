@@ -22,11 +22,19 @@ export class Mainarea implements OnInit{
   sizeX = signal(7); //this size refers to DRAWING MODE sizes!
   sizeY = signal(7); //this size refers to DRAWING MODE sizes!
 
+  forkliftNumber = signal(5);
+  draftForkliftNumber = signal(5);
+
   editModeEnabled = signal(false);
   drawingModeEnabled = signal(true);
 
   minSize : number= 6;
   maxSize : number= 12;
+
+  minForklift : number = 1;
+  maxForklift : number = 12;
+
+  layoutPresent = signal(false);
 
   gridWidthPx = computed(() => this.drawingModeEnabled() ? this.sizeX() * GRID_CONFIG.editGridCellSizePx : this.sizeX() * GRID_CONFIG.gridCellSizePx * 2);
   gridHeightPx = computed(() => this.drawingModeEnabled() ? this.sizeY() * GRID_CONFIG.editGridCellSizePx : this.sizeY() * GRID_CONFIG.gridCellSizePx * 2);
@@ -36,7 +44,31 @@ export class Mainarea implements OnInit{
   cells = computed(() => this.gridService.cells());
 
   ngOnInit(): void {
-    this.editGridService.fillStarterCells(this.sizeX(), this.sizeY());
+    this.layoutServiceApi.getLatestLayout().subscribe(
+      {
+        next: (layoutDto) => {
+          if(layoutDto && layoutDto.gridData && layoutDto.gridData.length > 0){
+            this.gridService.setDataFromServer(layoutDto);
+            this.sizeX.set(this.gridService.sizeX() / 2);
+            this.sizeY.set(this.gridService.sizeY() / 2);
+            this.forkliftNumber.set(layoutDto.forkliftNumber);
+            this.draftForkliftNumber.set(layoutDto.forkliftNumber);
+            this.drawingModeEnabled.set(false);
+            this.layoutPresent.set(true);
+            console.info(`Found layout for this browser: ${layoutDto.id}`);
+          }
+          else{
+            this.editGridService.fillStarterCells(this.sizeX(), this.sizeY());
+          }
+
+        },
+        error: (error) => {
+          console.info('No layout for this browser found:', error);
+          this.editGridService.fillStarterCells(this.sizeX(), this.sizeY());
+        }
+      }
+    );
+   
   }
 
   editModeToggle() { 
@@ -51,14 +83,35 @@ export class Mainarea implements OnInit{
     return Math.max(this.minSize, Math.min(this.maxSize, size));
   }
 
+  getCorrectForkliftNumber(forkliftNumber: number): number {
+    return Math.max(this.minForklift, Math.min(this.maxForklift, forkliftNumber));
+  }
+
   handleGridExpansion(request: { origin: Coordinate, direction: Direction}){
     this.editGridService.addCell(request.origin, request.direction);
   }
 
   confirmLayout() {
-    if(!this.gridService.setLayout(this.sizeX(), this.sizeY(), this.drawingCells())){
-      this.drawingModeEnabled.set(false);
-    }
-    const resp = this.layoutServiceApi.postNewLayout(this.gridService.cells());
+    this.gridService.setLayout(this.sizeX(), this.sizeY(), this.drawingCells());
+    
+    this.layoutServiceApi.postNewLayout(this.gridService.cells()).subscribe({
+      next: (response) => {
+        console.log('Saved successfully!', response);
+        this.drawingModeEnabled.set(false);
+        this.layoutPresent.set(true);
+      },
+      error: (err) => {
+        console.error('Server saving error!', err);
+        this.drawingModeEnabled.set(true);
+      }
+    });
+  }
+
+    revertForkliftNumber() {
+    this.draftForkliftNumber.set(this.forkliftNumber());
+  }
+    confirmForkliftNumber() {
+    this.forkliftNumber.set(this.draftForkliftNumber());
+    this.layoutServiceApi.updateForkliftNumber(this.forkliftNumber());
   }
 }

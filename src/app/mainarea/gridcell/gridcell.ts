@@ -10,14 +10,14 @@ import { GRID_CONFIG } from '../../config/grid.config';
   host: {
     '[style.left.px]': 'coordinate().x * gridSize',
     '[style.bottom.px]': 'coordinate().y * gridSize',
-    '[class.is-selected]': 'selected()',
+    '[class.is-road]': 'isRoad()',
     '[class.is-shelf]': 'isShelf()'
   }
 })
 export class Gridcell {
   coordinate = input.required<Coordinate>();
   allowedDirections = input.required<Set<Direction>>();
-  selected = input(false);
+  isRoad = input(false);
   isShelf = input(false);
 
   protected readonly Direction = Direction;

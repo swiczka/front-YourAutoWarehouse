@@ -6,7 +6,7 @@ export interface Coordinate {
 export interface GridCellData{
     coordinates: Coordinate
     allowedDirections: Set<Direction>,
-    selected: boolean,
+    isRoad: boolean,
     isShelf: boolean
 }
 
