@@ -6,6 +6,9 @@ import { GRID_CONFIG } from '../config/grid.config';
 import { GridService } from '../services/grid-service';
 import { Gridcell } from './gridcell/gridcell';
 import { LayoutServiceApi } from '../api-services/layout-service-api';
+import { RxStompService } from '../stomp/rx-stomp.service';
+import { ForkliftLocationEvent } from '../events/ForkliftLocationEvent';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-mainarea',
@@ -18,6 +21,7 @@ export class Mainarea implements OnInit{
   private editGridService = inject(EditGridService);
   private gridService = inject(GridService)
   private layoutServiceApi = inject(LayoutServiceApi);
+  private stompService = inject(RxStompService);
 
   sizeX = signal(7); //this size refers to DRAWING MODE sizes!
   sizeY = signal(7); //this size refers to DRAWING MODE sizes!
@@ -44,7 +48,8 @@ export class Mainarea implements OnInit{
   cells = computed(() => this.gridService.cells());
 
   ngOnInit(): void {
-    this.layoutServiceApi.getLatestLayout().subscribe(
+    this.layoutServiceApi.getLatestLayout()
+    .subscribe(
       {
         next: (layoutDto) => {
           if(layoutDto && layoutDto.gridData && layoutDto.gridData.length > 0){
@@ -56,6 +61,15 @@ export class Mainarea implements OnInit{
             this.drawingModeEnabled.set(false);
             this.layoutPresent.set(true);
             console.info(`Found layout for this browser: ${layoutDto.id}`);
+
+            //initializing websocket listening
+            this.stompService.watch(`/topic/layout/${layoutDto.id}/forklifts`)
+              .pipe(
+                map((message): ForkliftLocationEvent => JSON.parse(message.body))
+              )
+              .subscribe((event) => {
+                console.info(`Forklift ${event.forkliftId} is at (${event.x}, ${event.y}) at ${event.timestamp}`);
+              });
           }
           else{
             this.editGridService.fillStarterCells(this.sizeX(), this.sizeY());
