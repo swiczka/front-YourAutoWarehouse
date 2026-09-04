@@ -1,10 +1,4 @@
-header {
-    display: flex;
-    padding-inline: 16px;
-    padding-block: 16px;
-    background-color: #997d5f;
-    color: white;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 20px;
+mat-toolbar {
+  background-color: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
 }

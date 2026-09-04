@@ -1,0 +1,106 @@
+:host {
+  display: block;
+}
+
+.order-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+
+  // Flexbox na karcie, dzięki czemu gap: 16px wreszcie zadziała!
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .order-title {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.operation-type {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .type-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #666;
+  }
+}
+
+/* Przełącznik dostawa/wydanie rozciągnięty na całą szerokość */
+mat-button-toggle-group {
+  width: 100%;
+  --mat-button-toggle-shape: 6px;
+  --mat-button-toggle-selected-state-background-color: var(--mat-sys-primary);
+  --mat-button-toggle-selected-state-text-color: var(--mat-sys-on-primary);
+
+  mat-button-toggle {
+    flex: 1; /* Każdy przycisk zajmuje po 50% szerokości */
+  }
+}
+
+.order-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .packages-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .packages-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .packages-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: #444;
+      }
+    }
+
+    .package-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+
+      mat-form-field {
+        flex: 1;
+      }
+
+      .remove-btn {
+        min-width: 42px !important;
+        width: 42px;
+        height: 48px;
+        padding: 0 !important;
+        color: #d32f2f;
+        border-color: #ffcdd2;
+        font-size: 16px;
+
+        &:hover {
+          background-color: #ffebee;
+        }
+      }
+    }
+  }
+
+  /* Przycisk wysłania zlecenia na dole */
+  .submit-btn {
+    width: 100%;
+    margin-top: 4px;
+    padding: 10px 0;
+  }
+}

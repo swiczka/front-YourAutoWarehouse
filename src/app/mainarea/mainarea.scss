@@ -1,43 +1,51 @@
 .controls {
     margin-bottom: 20px;
     display: flex;
-    justify-content: space-between; /* Rozsuwa wewnętrzne divy na lewo i prawo */
+    justify-content: space-between; /* Rozsuwa lewą i prawą grupę */
     align-items: center;
     gap: 20px;
+    flex-wrap: wrap;
 
-    background-color: #f5f5f5;
+    background-color: var(--mat-sys-on-primary);
     border-radius: 8px;
-    padding: 15px 20px;
+    padding: 12px 20px;
 
-    /* Wyłapujemy bezpośrednie divy (lewą i prawą grupę) i robimy z nich wiersze */
+    .controls-group,
     > div {
         display: flex;
-        align-items: flex-end; /* Żeby guziki wyrównały się dołem z inputami */
-        gap: 20px; /* Odstęp między inputami a guzikiem wewnątrz grupy */
+        align-items: center; /* Wyrównuje inputy i przyciski idealnie w jednej linii w pionie */
+        gap: 16px;
+        flex-wrap: wrap;
     }
 
-    label {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-        font-weight: 500;
+    /* Dopasowanie szerokości pól Materiala do wartości liczbowych */
+    mat-form-field {
+        width: 140px;
     }
+}
 
-    input {
-        padding: 8px;
-        border: 1px solid #ccc;
-        background-color: white;
-        border-radius: 4px;
-        width: 100px;
-    }
+.warehouse-orders {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.orders-container {
+    flex-shrink: 0;
+    width: 350px;
+    background-color: var(--mat-sys-on-primary);
+    padding: 12px 20px;
+    align-items: flex-start;
 }
 
 .warehouse-container {
     padding: 50px; /* Większy padding żeby garaż nie ucięło przy małym ekranie */
-    background-color: #f5f5f5;
+    background-color: var(--mat-sys-on-primary);
     border-radius: 8px;
     overflow: auto;
     min-height: 400px;
+    flex: 1;
 }
 
 .warehouse-grid {

@@ -12,7 +12,7 @@ export const myRxStompConfig: RxStompConfig = {
   reconnectDelay: 2000,
 
   // Console diagnostics (avoid in production)
-  debug: (msg: string): void => {
-    console.log(new Date(), msg);
-  },
+  // debug: (msg: string): void => {
+  //   console.log(new Date(), msg);
+  // },
 };

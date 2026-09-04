@@ -1,0 +1,21 @@
+:host {
+    position: absolute;
+    display: flex;
+}
+
+.forklift {
+    width: var(--forklift-size);
+    height: var(--forklift-size);
+    display: block;
+
+    .st0,
+    path,
+    polygon {
+        fill: var(--forklift-color);
+        stroke: #ffffff;
+        stroke-width: 44px;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        paint-order: stroke fill;
+    }
+}

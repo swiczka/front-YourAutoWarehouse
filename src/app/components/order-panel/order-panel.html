@@ -1,0 +1,89 @@
+<div class="order-card">
+  <h3 class="order-title">Nowe zlecenie</h3>
+
+  <!-- Wybór typu: Dostawa / Wydanie -->
+  <div class="operation-type">
+    <span class="type-label">Typ operacji:</span>
+    <mat-button-toggle-group 
+      hideSingleSelectionIndicator 
+      name="orderType" 
+      [value]="orderType()"
+      (change)="orderType.set($event.value)"
+      aria-label="Typ zlecenia">
+      <mat-button-toggle value="Inbound">Dostawa</mat-button-toggle>
+      <mat-button-toggle value="Outbound">Wydanie</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <!-- FORMULARZ DOSTAWY (INBOUND) -->
+  @if (orderType() === 'Inbound') {
+    <form [formGroup]="inboundForm" (ngSubmit)="submitInbound()" class="order-form">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>ID firmy</mat-label>
+        <input matInput placeholder="np. 67" formControlName="companyId">
+      </mat-form-field>
+
+      <!-- Sekcja dynamicznych paczek -->
+      <div class="packages-section" formArrayName="packages">
+        <div class="packages-header">
+          <span class="packages-title">Paczki ({{ inboundPackages.length }}):</span>
+          <button matButton="outlined" type="button" (click)="addInboundPackage()">
+            + Dodaj paczkę
+          </button>
+        </div>
+
+        @for (packageControl of inboundPackages.controls; track $index; let i = $index) {
+          <div class="package-row">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label>Paczka {{ i + 1 }}</mat-label>
+              <input matInput placeholder="np. Opony 205/55" [formControlName]="i">
+            </mat-form-field>
+            <button matButton="outlined" type="button" class="remove-btn" (click)="removeInboundPackage(i)" title="Usuń paczkę">
+              ✕
+            </button>
+          </div>
+        }
+      </div>
+
+      <button matButton="filled" type="submit" class="submit-btn" [disabled]="!inboundForm.valid">
+        Przyjmij dostawę
+      </button>
+    </form>
+  }
+
+  <!-- FORMULARZ WYDANIA (OUTBOUND) -->
+  @if (orderType() === 'Outbound') {
+    <form [formGroup]="outboundForm" (ngSubmit)="submitOutbound()" class="order-form">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>ID firmy</mat-label>
+        <input matInput placeholder="np. 67" formControlName="companyId">
+      </mat-form-field>
+
+      <!-- Sekcja dynamicznych paczek dla wydania -->
+      <div class="packages-section" formArrayName="packages">
+        <div class="packages-header">
+          <span class="packages-title">Paczki ({{ outboundPackages.length }}):</span>
+          <button matButton="outlined" type="button" (click)="addOutboundPackage()">
+            + Dodaj paczkę
+          </button>
+        </div>
+
+        @for (packageControl of outboundPackages.controls; track $index; let i = $index) {
+          <div class="package-row">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label>Paczka #{{ i + 1 }}</mat-label>
+              <input matInput placeholder="np. Opony 205/55" [formControlName]="i">
+            </mat-form-field>
+            <button matButton="outlined" type="button" class="remove-btn" (click)="removeOutboundPackage(i)" title="Usuń paczkę">
+              ✕
+            </button>
+          </div>
+        }
+      </div>
+
+      <button matButton="filled" type="submit" class="submit-btn" [disabled]="!outboundForm.valid">
+        Zleć wydanie towaru
+      </button>
+    </form>
+  }
+</div>

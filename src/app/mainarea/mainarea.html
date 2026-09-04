@@ -1,77 +1,89 @@
 <div class="controls">
-    <div>    
-        <label>
-            Szerokość (X):
-            <input type="number" [disabled]="!editModeEnabled()" [value]="sizeX()" (input)="sizeX.set(getCorrectSize(xInput.valueAsNumber || this.minSize))" #xInput>
-        </label>
-        <label>
-            Wysokość (Y):
-            <input type="number" [disabled]="!editModeEnabled()" [value]="sizeY()" (input)="sizeY.set(getCorrectSize(yInput.valueAsNumber || this.minSize))" #yInput>
-        </label>
-        <button (click)="editModeToggle()">
+    <div class="controls-group">    
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Szerokość (X)</mat-label>
+            <input matInput type="number" [disabled]="!editModeEnabled()" [value]="sizeX()" (input)="sizeX.set(getCorrectSize(xInput.valueAsNumber || this.minSize))" #xInput>
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Wysokość (Y)</mat-label>
+            <input matInput type="number" [disabled]="!editModeEnabled()" [value]="sizeY()" (input)="sizeY.set(getCorrectSize(yInput.valueAsNumber || this.minSize))" #yInput>
+        </mat-form-field>
+        <button matButton="filled" (click)="editModeToggle()">
             {{editModeEnabled() ? 'Zatwierdź' : 'Odblokuj zmianę rozmiaru'}}
         </button>
     </div>
     @if(layoutPresent()){
-    <div>
-        <label>
-            Liczba wózków:
-            <input type="number" [min]="minForklift" [max]="maxForklift" [defaultValue]="draftForkliftNumber()" [value]="draftForkliftNumber()" (input)="draftForkliftNumber.set(getCorrectForkliftNumber(forkliftInput.valueAsNumber || this.minForklift))" #forkliftInput>
-        </label>
-        <button (click)="confirmForkliftNumber()">
+    <div class="controls-group">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Liczba wózków</mat-label>
+            <input matInput type="number" [min]="minForklift" [max]="maxForklift" [value]="draftForkliftNumber()" (input)="draftForkliftNumber.set(getCorrectForkliftNumber(forkliftInput.valueAsNumber || this.minForklift))" #forkliftInput>
+        </mat-form-field>
+        <button matButton="filled" (click)="confirmForkliftNumber()">
             Zatwierdź
         </button>
-        <button (click)="revertForkliftNumber()">
+        <button matButton="outlined" (click)="revertForkliftNumber()">
             Cofnij zmiany
         </button>
     </div>
     }
-   
 </div>
 
-<div class="warehouse-container">
-    <div class="warehouse-grid" 
-         [style.width.px]="gridWidthPx()" 
-         [style.height.px]="gridHeightPx()">
-         
-        <!-- Renderujemy wszystkie komórki za pomocą pętli @for -->
-        @if(drawingModeEnabled()){
-            @for (cell of drawingCells(); track cell.coordinate.x + '-' + cell.coordinate.y) {
-            <app-editgridcell 
-                [coordinate]="cell.coordinate" 
-                [allowedBranchings]="cell.allowedBranchings"
-                [selected]="cell.selected"
-                (expandRequest)="handleGridExpansion($event)">
-            </app-editgridcell>
+<div class="warehouse-orders">
+    <div class="warehouse-container">
+        <div class="warehouse-grid" 
+            [style.width.px]="gridWidthPx()" 
+            [style.height.px]="gridHeightPx()">
+            
+            <!-- Renderujemy wszystkie komórki za pomocą pętli @for -->
+            @if(drawingModeEnabled()){
+                @for (cell of drawingCells(); track cell.coordinate.x + '-' + cell.coordinate.y) {
+                <app-editgridcell 
+                    [coordinate]="cell.coordinate" 
+                    [allowedBranchings]="cell.allowedBranchings"
+                    [selected]="cell.selected"
+                    (expandRequest)="handleGridExpansion($event)">
+                </app-editgridcell>
+                }
             }
-        }
-        @else {
-            @for (cell of cells().values(); track cell.coordinates.x + '-' + cell.coordinates.y) {
-            <app-gridcell 
-                [coordinate]="cell.coordinates" 
-                [allowedDirections]="cell.allowedDirections"
-                [isRoad]="cell.isRoad"
-                [isShelf]="cell.isShelf">
-            </app-gridcell>
+            @else {
+                @for (cell of cells().values(); track cell.coordinates.x + '-' + cell.coordinates.y) {
+                <app-gridcell 
+                    [coordinate]="cell.coordinates" 
+                    [allowedDirections]="cell.allowedDirections"
+                    [isRoad]="cell.isRoad"
+                    [isShelf]="cell.isShelf">
+                </app-gridcell>
+                }
+                @for (forklift of forklifts().values(); track forklift.id) {
+                <app-forklift 
+                    [id]="forklift.id" 
+                    [x]="forklift.x"
+                    [y]="forklift.y">
+                </app-forklift>
+                }
             }
-        }
-        
-        
-
-        <!-- Garaż wózków widłowych (Forklift Garage) -->
-        <div class="forklift-garage">
-            Garaż
+            
+            <!-- Garaż wózków widłowych (Forklift Garage) -->
+            <div class="forklift-garage">
+                Garaż
+            </div>
+            <div class="delivery-zone">
+                Dostawy
+            </div>
+            <div class="sending-zone">
+                Wydania
+            </div>
+            
         </div>
-        <div class="delivery-zone">
-            Dostawy
-        </div>
-        <div class="sending-zone">
-            Wydania
+        <div class="confirm-button">
+                <button matButton="filled" (click)="confirmLayout()">Zatwierdź siatkę</button>
         </div>
         
     </div>
-    <div class="confirm-button">
-        <button (click)="confirmLayout()">Zatwierdź siatkę</button>
+    <div class="orders-container">
+        @if (layoutId(); as currentId) {
+        <app-order-panel [layoutId]="currentId" />
+        }
     </div>
 </div>
 

@@ -9,10 +9,17 @@ import { LayoutServiceApi } from '../api-services/layout-service-api';
 import { RxStompService } from '../stomp/rx-stomp.service';
 import { ForkliftLocationEvent } from '../events/ForkliftLocationEvent';
 import { map } from 'rxjs';
+import { ForkliftService } from '../services/forklift-service';
+import { Forklift } from "../components/forklift/forklift";
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {FormsModule} from '@angular/forms';
+import {MatButtonModule} from '@angular/material/button';
+import { OrderPanel } from '../components/order-panel/order-panel';
 
 @Component({
   selector: 'app-mainarea',
-  imports: [EditGridCell, Gridcell],
+  imports: [EditGridCell, Gridcell, Forklift, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, OrderPanel],
   templateUrl: './mainarea.html',
   styleUrl: './mainarea.scss',
 })
@@ -22,9 +29,12 @@ export class Mainarea implements OnInit{
   private gridService = inject(GridService)
   private layoutServiceApi = inject(LayoutServiceApi);
   private stompService = inject(RxStompService);
+  private forkliftService = inject(ForkliftService);
 
   sizeX = signal(7); //this size refers to DRAWING MODE sizes!
   sizeY = signal(7); //this size refers to DRAWING MODE sizes!
+
+  layoutId = signal<number | null>(null);
 
   forkliftNumber = signal(5);
   draftForkliftNumber = signal(5);
@@ -46,6 +56,7 @@ export class Mainarea implements OnInit{
   drawingCells = computed(() => this.editGridService.cells());
 
   cells = computed(() => this.gridService.cells());
+  forklifts = computed(() => this.forkliftService.forklifts());
 
   ngOnInit(): void {
     this.layoutServiceApi.getLatestLayout()
@@ -60,6 +71,7 @@ export class Mainarea implements OnInit{
             this.draftForkliftNumber.set(layoutDto.forkliftNumber);
             this.drawingModeEnabled.set(false);
             this.layoutPresent.set(true);
+            this.layoutId.set(layoutDto.id);
             console.info(`Found layout for this browser: ${layoutDto.id}`);
 
             //initializing websocket listening
@@ -69,6 +81,7 @@ export class Mainarea implements OnInit{
               )
               .subscribe((event) => {
                 console.info(`Forklift ${event.forkliftId} is at (${event.x}, ${event.y}) at ${event.timestamp}`);
+                this.forkliftService.handleLocationEvent(event);
               });
           }
           else{
@@ -113,6 +126,7 @@ export class Mainarea implements OnInit{
         console.log('Saved successfully!', response);
         this.drawingModeEnabled.set(false);
         this.layoutPresent.set(true);
+        this.layoutId.set(response.constructor.name === 'Object' && 'id' in response ? (response as any).id : null);
       },
       error: (err) => {
         console.error('Server saving error!', err);
