@@ -29,20 +29,20 @@ export class OrderPanel {
 
   inboundForm = new FormGroup({
     companyId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    packages: new FormArray<FormControl<string>>([]),
+    packageNames: new FormArray<FormControl<string>>([]),
   });
 
   outboundForm = new FormGroup({
     companyId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    packages: new FormArray<FormControl<string>>([]),
+    packageNames: new FormArray<FormControl<string>>([]),
   });
 
   get inboundPackages(): FormArray<FormControl<string>> {
-    return this.inboundForm.controls.packages;
+    return this.inboundForm.controls.packageNames;
   }
 
   get outboundPackages(): FormArray<FormControl<string>> {
-    return this.outboundForm.controls.packages;
+    return this.outboundForm.controls.packageNames;
   }
 
   addInboundPackage(): void {

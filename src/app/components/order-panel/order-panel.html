@@ -24,7 +24,7 @@
       </mat-form-field>
 
       <!-- Sekcja dynamicznych paczek -->
-      <div class="packages-section" formArrayName="packages">
+      <div class="packages-section" formArrayName="packageNames">
         <div class="packages-header">
           <span class="packages-title">Paczki ({{ inboundPackages.length }}):</span>
           <button matButton="outlined" type="button" (click)="addInboundPackage()">
@@ -60,7 +60,7 @@
       </mat-form-field>
 
       <!-- Sekcja dynamicznych paczek dla wydania -->
-      <div class="packages-section" formArrayName="packages">
+      <div class="packages-section" formArrayName="packageNames">
         <div class="packages-header">
           <span class="packages-title">Paczki ({{ outboundPackages.length }}):</span>
           <button matButton="outlined" type="button" (click)="addOutboundPackage()">

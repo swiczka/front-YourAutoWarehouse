@@ -1,5 +1,5 @@
 export interface InboundOrderDto {
   companyId: string;
-  packages: string[];
+  packageNames: string[];
   layoutId: number;
 }
