@@ -1,8 +1,12 @@
 :host {
   display: block;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .order-card {
+  box-sizing: border-box;
+  width: 100%;
   background-color: white;
   border-radius: 8px;
   padding: 20px;

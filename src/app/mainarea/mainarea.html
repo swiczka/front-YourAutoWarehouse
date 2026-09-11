@@ -51,7 +51,9 @@
                     [coordinate]="cell.coordinates" 
                     [allowedDirections]="cell.allowedDirections"
                     [isRoad]="cell.isRoad"
-                    [isShelf]="cell.isShelf">
+                    [isShelf]="cell.isShelf"
+                    [package]="this.getPackageByCoord(cell.coordinates.x, cell.coordinates.y)"
+                    (cellClick)="selectedPackage.set($event)">
                 </app-gridcell>
                 }
                 @for (forklift of forklifts().values(); track forklift.id) {
@@ -60,6 +62,12 @@
                     [x]="forklift.x"
                     [y]="forklift.y">
                 </app-forklift>
+                }
+                @if (selectedPackage(); as selectedPkg) {
+                <app-package-popup 
+                    [package]="selectedPkg"
+                    (close)="selectedPackage.set(null)">
+                </app-package-popup>
                 }
             }
             
@@ -80,10 +88,39 @@
         </div>
         
     </div>
-    <div class="orders-container">
-        @if (layoutId(); as currentId) {
-        <app-order-panel [layoutId]="currentId" />
-        }
-    </div>
+    @if(!this.drawingModeEnabled()){
+    <mat-sidenav-container class="sidenav-container">
+        <mat-sidenav #sidenav mode="side" position="end" [(opened)]="sidebarOpened">
+            <div class="orders-container">
+                @if (orderPanelMode() === "new") {
+                    @if (layoutId(); as currentId) {
+                        <app-order-panel [layoutId]="currentId" />
+                    }
+                }
+                @if (orderPanelMode() === "inbound"){
+                    @if (layoutId(); as currentId) {
+                        <app-orders-view [layoutId]="currentId" orderType="inbound" />
+                    }
+                }
+                @if (orderPanelMode() === "outbound"){
+                    @if (layoutId(); as currentId) {
+                        <app-orders-view [layoutId]="currentId" orderType="outbound" />
+                    }
+                }
+            </div>
+        </mat-sidenav>
+        <mat-sidenav-content>
+            <div class="menu-buttons">
+                <button matIconButton (click)="sidenav.toggle()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24px"><path d="M460-320v-320L300-480l160 160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm440-80h120v-560H640v560Zm-80 0v-560H200v560h360Zm80 0h120-120Z"/></svg>
+                </button>
+                <button matButton (click)="orderPanelMode.set('inbound')">Zamówienia dostawy</button>
+                <button matButton (click)="orderPanelMode.set('outbound')">Zamówienia wydania</button>
+                <button matButton (click)="orderPanelMode.set('new')">+ Dodaj nowe</button>
+            </div>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+    }
+   
 </div>
 

@@ -18,4 +18,8 @@
     &.is-shelf {
         background-color: rgb(233, 200, 139);
     }
+    &.has-package {
+        background-color: rgb(233, 161, 102);
+        cursor: pointer;
+    }
 }

@@ -16,10 +16,28 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {FormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import { OrderPanel } from '../components/order-panel/order-panel';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatIconModule} from '@angular/material/icon';
+import { OrdersView } from '../components/orders-view/orders-view';
+import { PackageItemService } from '../services/package-item-service';
+import { PackageItemReadDto } from '../dto/PackageItemReadDto';
+import { PackagePopup } from '../components/package-popup/package-popup';
 
 @Component({
   selector: 'app-mainarea',
-  imports: [EditGridCell, Gridcell, Forklift, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, OrderPanel],
+  imports: [EditGridCell, 
+    Gridcell, 
+    MatSidenavModule,
+    Forklift, 
+    FormsModule, 
+    MatFormFieldModule, 
+    MatInputModule, 
+    MatButtonModule, 
+    OrderPanel,
+    OrdersView,
+    MatIconModule,
+    PackagePopup],
   templateUrl: './mainarea.html',
   styleUrl: './mainarea.scss',
 })
@@ -30,6 +48,7 @@ export class Mainarea implements OnInit{
   private layoutServiceApi = inject(LayoutServiceApi);
   private stompService = inject(RxStompService);
   private forkliftService = inject(ForkliftService);
+  private packageService = inject(PackageItemService);
 
   sizeX = signal(7); //this size refers to DRAWING MODE sizes!
   sizeY = signal(7); //this size refers to DRAWING MODE sizes!
@@ -58,6 +77,12 @@ export class Mainarea implements OnInit{
   cells = computed(() => this.gridService.cells());
   forklifts = computed(() => this.forkliftService.forklifts());
 
+  private _snackBar = inject(MatSnackBar);
+  sidebarOpened = signal(false);
+
+  orderPanelMode = signal<"new" | "inbound" | "outbound">("new");
+  selectedPackage = signal<PackageItemReadDto | null>(null);
+
   ngOnInit(): void {
     this.layoutServiceApi.getLatestLayout()
     .subscribe(
@@ -83,6 +108,8 @@ export class Mainarea implements OnInit{
                 console.info(`Forklift ${event.forkliftId} is at (${event.x}, ${event.y}) at ${event.timestamp}`);
                 this.forkliftService.handleLocationEvent(event);
               });
+            
+            this.packageService.addPackagesOnLayoutInit(layoutDto.id);
           }
           else{
             this.editGridService.fillStarterCells(this.sizeX(), this.sizeY());
@@ -95,7 +122,28 @@ export class Mainarea implements OnInit{
         }
       }
     );
-   
+    
+    this.stompService.stompErrors$.subscribe({
+      next: (error) => {
+        if(!this._snackBar._openedSnackBarRef) 
+          this.openSnackBar("Nie można nawiązać połączenia z serwerem.")
+      }
+    });
+      
+    this.stompService.webSocketErrors$.subscribe({
+      next: (error) => {
+        if(!this._snackBar._openedSnackBarRef) 
+          this.openSnackBar("Nie można nawiązać połączenia z serwerem.")
+      }
+    });
+  }
+
+  getPackageByCoord(x: number, y: number) : PackageItemReadDto | null {
+    return this.packageService.getByCoords(x, y);
+  }
+
+  openSnackBar(message: string) {
+    this._snackBar.open(message, "Zamknij");
   }
 
   editModeToggle() { 

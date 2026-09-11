@@ -1,0 +1,17 @@
+.packages-section {
+  margin-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  padding-top: 16px;
+
+  h3 {
+    margin: 0 0 12px 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+}
+
+.packages-table {
+  overflow: auto;
+  border-radius: 10px;
+  max-height: 300px;
+}
