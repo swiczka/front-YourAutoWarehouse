@@ -57,11 +57,13 @@
                 </app-gridcell>
                 }
                 @for (forklift of forklifts().values(); track forklift.id) {
-                <app-forklift 
-                    [id]="forklift.id" 
-                    [x]="forklift.x"
-                    [y]="forklift.y">
-                </app-forklift>
+                    @if(!(forklift.x === 0 && forklift.y === 0)){
+                        <app-forklift 
+                            [id]="forklift.id" 
+                            [x]="forklift.x"
+                            [y]="forklift.y">
+                        </app-forklift>
+                    }
                 }
                 @if (selectedPackage(); as selectedPkg) {
                 <app-package-popup 
@@ -75,9 +77,7 @@
             <div class="forklift-garage">
                 Garaż
             </div>
-            <div class="delivery-zone">
-                Dostawy
-            </div>
+            <app-delivery-zone [packages]="this.packageService.getDeliveredPackaged()"></app-delivery-zone>
             <div class="sending-zone">
                 Wydania
             </div>

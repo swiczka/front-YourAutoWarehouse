@@ -127,25 +127,6 @@
     border-bottom-left-radius: 8px;
 }
 
-.delivery-zone {
-    position: absolute;
-    left: calc(var(--grid-cell-size) * -2); 
-    top: 0; 
-    
-    width: calc(var(--grid-cell-size) * 2 - 2px);
-    height: calc(var(--grid-cell-size) * 2 - 2px);
-    
-    background-color: #84a5e7;
-    border: 2px solid #5e75a3;
-    border-right: none; /* Żeby łączyło się ładnie z siatką bez podwójnej ramki */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: #333;
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
 
 .sending-zone {
     position: absolute;

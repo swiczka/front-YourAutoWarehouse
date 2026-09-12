@@ -23,6 +23,8 @@ import { OrdersView } from '../components/orders-view/orders-view';
 import { PackageItemService } from '../services/package-item-service';
 import { PackageItemReadDto } from '../dto/PackageItemReadDto';
 import { PackagePopup } from '../components/package-popup/package-popup';
+import { PackageSocketEvent } from '../events/PackageLocationEvent';
+import { DeliveryZone } from '../components/delivery-zone/delivery-zone';
 
 @Component({
   selector: 'app-mainarea',
@@ -37,7 +39,8 @@ import { PackagePopup } from '../components/package-popup/package-popup';
     OrderPanel,
     OrdersView,
     MatIconModule,
-    PackagePopup],
+    PackagePopup,
+    DeliveryZone],
   templateUrl: './mainarea.html',
   styleUrl: './mainarea.scss',
 })
@@ -48,7 +51,7 @@ export class Mainarea implements OnInit{
   private layoutServiceApi = inject(LayoutServiceApi);
   private stompService = inject(RxStompService);
   private forkliftService = inject(ForkliftService);
-  private packageService = inject(PackageItemService);
+  packageService = inject(PackageItemService);
 
   sizeX = signal(7); //this size refers to DRAWING MODE sizes!
   sizeY = signal(7); //this size refers to DRAWING MODE sizes!
@@ -83,6 +86,10 @@ export class Mainarea implements OnInit{
   orderPanelMode = signal<"new" | "inbound" | "outbound">("new");
   selectedPackage = signal<PackageItemReadDto | null>(null);
 
+  deliveryPackages = computed(() => {
+    this.packageService.deliveredPackages
+  });
+
   ngOnInit(): void {
     this.layoutServiceApi.getLatestLayout()
     .subscribe(
@@ -100,14 +107,8 @@ export class Mainarea implements OnInit{
             console.info(`Found layout for this browser: ${layoutDto.id}`);
 
             //initializing websocket listening
-            this.stompService.watch(`/topic/layout/${layoutDto.id}/forklifts`)
-              .pipe(
-                map((message): ForkliftLocationEvent => JSON.parse(message.body))
-              )
-              .subscribe((event) => {
-                console.info(`Forklift ${event.forkliftId} is at (${event.x}, ${event.y}) at ${event.timestamp}`);
-                this.forkliftService.handleLocationEvent(event);
-              });
+            this.initializeForkliftStompListening(layoutDto.id);
+            this.initializePackageStompListening(layoutDto.id);
             
             this.packageService.addPackagesOnLayoutInit(layoutDto.id);
           }
@@ -136,6 +137,36 @@ export class Mainarea implements OnInit{
           this.openSnackBar("Nie można nawiązać połączenia z serwerem.")
       }
     });
+  }
+
+  private initializeForkliftStompListening(layoutId: number) {
+     this.stompService.watch(`/topic/layout/${layoutId}/forklifts`)
+              .pipe(
+                map((message): ForkliftLocationEvent => JSON.parse(message.body))
+              )
+              .subscribe((event) => {
+                console.info(`Forklift ${event.forkliftId} is at (${event.x}, ${event.y}) at ${event.timestamp}`);
+                this.forkliftService.handleLocationEvent(event);
+              });
+  }
+
+  private initializePackageStompListening(layoutId: number) {
+     this.stompService.watch(`/topic/layout/${layoutId}/packages`)
+              .pipe(
+                map((message): PackageSocketEvent => JSON.parse(message.body))
+              )
+              .subscribe((event: PackageSocketEvent) => {
+              if ('inboundOrderId' in event) {
+                  console.info(`New package allocated: ${event.name} at (${event.currentX}, ${event.currentY})`);
+                  this.packageService.handleAllocatedEvent(event);
+              } else if ('x' in event && 'y' in event) {
+                  console.info(`Package ${event.packageId} moved to (${event.x}, ${event.y})`);
+                  this.packageService.handleStoredEvent(event);
+              } else {
+                  console.info(`Package ${event.packageId} picked by forklift ${event.forkliftId}`);
+                  this.packageService.handlePickedEvent(event);
+              }
+              });
   }
 
   getPackageByCoord(x: number, y: number) : PackageItemReadDto | null {

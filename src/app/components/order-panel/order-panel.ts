@@ -6,6 +6,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatButtonModule } from '@angular/material/button';
 import { InboundOrderDto } from '../../dto/InboundOrderDto';
 import { OrderServiceApi } from '../../api-services/order-service-api';
+import { PackageItemService } from '../../services/package-item-service';
 
 export type OrderType = 'Inbound' | 'Outbound';
 
@@ -25,6 +26,7 @@ export class OrderPanel {
   orderType = signal<OrderType>('Inbound');
 
   orderApiService = inject(OrderServiceApi);
+  packageService = inject(PackageItemService);
   readonly layoutId = input.required<number>();
 
   inboundForm = new FormGroup({
