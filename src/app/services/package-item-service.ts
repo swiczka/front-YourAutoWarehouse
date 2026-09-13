@@ -1,4 +1,4 @@
-import { inject, Service, signal } from '@angular/core';
+import { computed, inject, Service, signal } from '@angular/core';
 import { PackageItemReadDto } from '../dto/PackageItemReadDto';
 import { PackageItemServiceApi } from '../api-services/package-item-service-api';
 import { Coordinate } from '../helpers/grid.helpers';
@@ -12,6 +12,10 @@ export class PackageItemService {
     packages = signal<Map<string, PackageItemReadDto>>(new Map());
 
     deliveredPackages = signal<PackageItemReadDto[]>([]);
+
+    readonly allocatedPackages = computed(() =>
+        this.deliveredPackages().filter(pkg => pkg.status === 'ALLOCATED')
+    );
 
     packageServiceApi = inject(PackageItemServiceApi);
 
@@ -30,32 +34,31 @@ export class PackageItemService {
         });
     }
 
-    getDeliveredPackaged(){
-      return this.deliveredPackages()
-    }
-
     handleStoredEvent(event: PackageStoredEvent) {
-    const curPackages = new Map<string, PackageItemReadDto>(this.packages());
+        const pkg = this.deliveredPackages().find(p => p.id === event.packageId);
+        if (!pkg) {
+            return;
+        }
+  
+        this.deliveredPackages.update(pkgs => pkgs.filter(p => p.id !== event.packageId));
 
-    const pkg = Array.from(curPackages.values()).find(p => p.id === event.packageId);
+        const storedPackage: PackageItemReadDto = {
+            ...pkg,
+            x: event.x,
+            y: event.y,
+            status: 'STORED'
+        };
 
-    if (pkg) {
-        curPackages.delete(this.cordsToKey(pkg.x, pkg.y));
-
-        pkg.x = event.x;
-        pkg.y = event.y;
-        pkg.status = "STORED";
-
-        curPackages.set(this.cordsToKey(event.x, event.y), pkg);
-
-        this.packages.set(curPackages);
-    }
+        this.packages.update(currentMap => new Map(currentMap).set(this.cordsToKey(event.x, event.y), storedPackage));
     }
 
     handlePickedEvent(event: PackagePickedEvent) {
-      this.deliveredPackages.update(packages => 
-          packages.filter(pkg => pkg.id !== event.packageId)
-      );
+        this.deliveredPackages.update(pkgs =>
+            pkgs.map(p => p.id === event.packageId 
+                ? { ...p, status: 'IN_TRANSIT' } 
+                : p
+            )
+        );
     }
 
     handleAllocatedEvent(event: PackageAllocatedEvent) {
@@ -66,7 +69,7 @@ export class PackageItemService {
         outboundOrderId: null,
         x: event.currentX,
         y: event.currentY,
-        status: event.status,
+        status: event.status, //should always be ALLOCATED here 
         layoutId: event.layoutId
       };
       this.deliveredPackages.update(prev => [...prev, newPackage]);

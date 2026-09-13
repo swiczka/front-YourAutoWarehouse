@@ -51,7 +51,9 @@ export class Mainarea implements OnInit{
   private layoutServiceApi = inject(LayoutServiceApi);
   private stompService = inject(RxStompService);
   private forkliftService = inject(ForkliftService);
-  packageService = inject(PackageItemService);
+  private packageService = inject(PackageItemService);
+
+  readonly allocatedPackages = this.packageService.allocatedPackages;
 
   sizeX = signal(7); //this size refers to DRAWING MODE sizes!
   sizeY = signal(7); //this size refers to DRAWING MODE sizes!
@@ -85,10 +87,6 @@ export class Mainarea implements OnInit{
 
   orderPanelMode = signal<"new" | "inbound" | "outbound">("new");
   selectedPackage = signal<PackageItemReadDto | null>(null);
-
-  deliveryPackages = computed(() => {
-    this.packageService.deliveredPackages
-  });
 
   ngOnInit(): void {
     this.layoutServiceApi.getLatestLayout()
