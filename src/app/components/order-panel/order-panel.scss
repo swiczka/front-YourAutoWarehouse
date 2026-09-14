@@ -101,6 +101,67 @@ mat-button-toggle-group {
     }
   }
 
+  .stored-packages-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .packages-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .packages-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: #444;
+      }
+    }
+
+    .no-packages-msg {
+      margin: 0;
+      font-size: 13px;
+      color: #888;
+      font-style: italic;
+      padding: 12px 0;
+    }
+
+    .table-container {
+      max-height: 430px;
+      overflow-y: auto;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+
+      table {
+        width: 100%;
+
+        th, td {
+          padding: 8px 10px;
+          font-size: 13px;
+        }
+
+        th.mat-column-select, td.mat-column-select {
+          width: 40px;
+          padding: 0 4px;
+          text-align: center;
+        }
+
+        tr.mat-mdc-row {
+          cursor: pointer;
+          transition: background-color 0.15s;
+
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+          }
+
+          &.selected-row {
+            background-color: rgba(153, 125, 95, 0.12);
+          }
+        }
+      }
+    }
+  }
+
   /* Przycisk wysłania zlecenia na dole */
   .submit-btn {
     width: 100%;

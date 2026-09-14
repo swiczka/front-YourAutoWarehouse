@@ -12,6 +12,10 @@ export class PackageItemServiceApi {
         return this.http.get<PackageItemReadDto[]>(`/${this.apiName}/inbound/${orderId}`);
     }
 
+    getPackagesForOutboundOrder(orderId: number){
+        return this.http.get<PackageItemReadDto[]>(`/${this.apiName}/outbound/${orderId}`);
+    }
+
     getPackagesByLayoutId(layoutId: number){
         return this.http.get<PackageItemReadDto[]>(`/${this.apiName}/layout/${layoutId}`);
     }

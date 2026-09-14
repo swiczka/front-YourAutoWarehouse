@@ -1,35 +1,74 @@
-<div class="order-table">
-    <table mat-table [dataSource]="inboundOrders()" class="mat-shadow-2">
+@if(orderType() === "inbound"){
+    <div class="order-table">
+        <table mat-table [dataSource]="this.inboundOrders()" class="mat-shadow-2">
 
-    <ng-container matColumnDef="ID">
-        <th mat-header-cell *matHeaderCellDef> ID </th>
-        <td mat-cell *matCellDef="let order"> {{order.id}} </td>
-    </ng-container>
+        <ng-container matColumnDef="ID">
+            <th mat-header-cell *matHeaderCellDef> ID </th>
+            <td mat-cell *matCellDef="let order"> {{order.id}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="ID Firmy">
-        <th mat-header-cell *matHeaderCellDef> ID Firmy </th>
-        <td mat-cell *matCellDef="let order"> {{order.companyId}} </td>
-    </ng-container>
+        <ng-container matColumnDef="ID Firmy">
+            <th mat-header-cell *matHeaderCellDef> ID Firmy </th>
+            <td mat-cell *matCellDef="let order"> {{order.companyId}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="Utworzono">
-        <th mat-header-cell *matHeaderCellDef> Utworzono </th>
-        <td mat-cell *matCellDef="let order"> {{order.createdAt | date:'short'}} </td>
-    </ng-container>
+        <ng-container matColumnDef="Utworzono">
+            <th mat-header-cell *matHeaderCellDef> Utworzono </th>
+            <td mat-cell *matCellDef="let order"> {{order.createdAt | date:'short'}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="Status">
-        <th mat-header-cell *matHeaderCellDef> Status </th>
-        <td mat-cell *matCellDef="let order"> {{order.status}} </td>
-    </ng-container>
+        <ng-container matColumnDef="Status">
+            <th mat-header-cell *matHeaderCellDef> Status </th>
+            <td mat-cell *matCellDef="let order"> {{order.status}} </td>
+        </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row 
-        (click)="clickedOrder.set(row)"
-        [class.row-is-clicked]="clickedOrder() === row"
-        *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-</div>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row 
+            (click)="clickedOrder.set(row)"
+            [class.row-is-clicked]="clickedOrder() === row"
+            *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
 
-@if(clickedOrder()){
-    <app-order-packages [orderId]="clickedOrder()!.id"></app-order-packages>
+    @if(clickedOrder()){
+        <app-order-packages [orderId]="clickedOrder()!.id" [orderType]="'inbound'"></app-order-packages>
+    }
 }
+@else if (orderType() === "outbound") {
+    <div class="order-table">
+        <table mat-table [dataSource]="this.outboundOrders()" class="mat-shadow-2">
+
+        <ng-container matColumnDef="ID">
+            <th mat-header-cell *matHeaderCellDef> ID </th>
+            <td mat-cell *matCellDef="let order"> {{order.id}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="ID Firmy">
+            <th mat-header-cell *matHeaderCellDef> ID Firmy </th>
+            <td mat-cell *matCellDef="let order"> {{order.companyId}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Utworzono">
+            <th mat-header-cell *matHeaderCellDef> Utworzono </th>
+            <td mat-cell *matCellDef="let order"> {{order.createdAt | date:'short'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Status">
+            <th mat-header-cell *matHeaderCellDef> Status </th>
+            <td mat-cell *matCellDef="let order"> {{order.status}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row 
+            (click)="clickedOrder.set(row)"
+            [class.row-is-clicked]="clickedOrder() === row"
+            *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+
+    @if(clickedOrder()){
+        <app-order-packages [orderId]="clickedOrder()!.id" [orderType]="'outbound'"></app-order-packages>
+    }
+}
+
     

@@ -17,6 +17,10 @@ export class PackageItemService {
         this.deliveredPackages().filter(pkg => pkg.status === 'ALLOCATED')
     );
 
+    readonly storedPackages = computed(() =>
+        Array.from(this.packages().values()).filter(pkg => pkg.status === 'STORED' && !pkg.outboundOrderId)
+    );
+
     packageServiceApi = inject(PackageItemServiceApi);
 
     addPackagesOnLayoutInit(layoutId: number){

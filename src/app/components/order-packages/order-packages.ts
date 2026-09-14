@@ -11,6 +11,7 @@ import { MatTableModule } from '@angular/material/table';
 })
 export class OrderPackages {
   orderId = input.required<number>();
+  orderType = input.required<"inbound" | "outbound">();
 
   packages = signal<PackageItemReadDto[] | null>(null);
 
@@ -20,19 +21,32 @@ export class OrderPackages {
 
   constructor() {
     effect(() => {
-      this.fetchInboundPackages();
+      this.fetchPackages();
     });
   }
 
-  fetchInboundPackages() {
-    this.packageServiceApi.getPackagesForInboundOrder(this.orderId())
-      .subscribe({
-        next: (packages) => {
-          this.packages.set(packages);
-        },
-        error: (error) => {
-          console.error('Error fetching packages for inbound order:', error);
-        }
-      });
+  fetchPackages() {
+    if(this.orderType() === "inbound"){
+      this.packageServiceApi.getPackagesForInboundOrder(this.orderId())
+        .subscribe({
+          next: (packages) => {
+            this.packages.set(packages);
+          },
+          error: (error) => {
+            console.error('Error fetching packages for inbound order:', error);
+          }
+        });
+    } else if(this.orderType() === "outbound"){
+      this.packageServiceApi.getPackagesForOutboundOrder(this.orderId())
+        .subscribe({
+          next: (packages) => {
+            this.packages.set(packages);
+          },
+          error: (error) => {
+            console.error('Error fetching packages for outbound order:', error);
+          }
+        });
+    }
+    
   }
 }

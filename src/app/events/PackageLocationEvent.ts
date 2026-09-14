@@ -23,4 +23,11 @@ export interface PackagePickedEvent {
     layoutId: number
 }
 
+export interface PackageDroppedEvent {
+    packageId: number;
+    layoutId: number;
+    x: number;
+    y: number;
+}
+
 export type PackageSocketEvent = PackageAllocatedEvent | PackageStoredEvent | PackagePickedEvent;
