@@ -103,6 +103,8 @@ export class OrderPanel {
         .subscribe({
           next: (response) => {
             console.log('Order submitted successfully!', response);
+            this.inboundForm.reset();
+            this.selection.clear();
           },
           error: (err) => {
             console.error('Error submitting order:', err);

@@ -1,17 +1,19 @@
 <div class="controls">
-    <div class="controls-group">    
-        <mat-form-field appearance="outline" subscriptSizing="dynamic">
-            <mat-label>Szerokość (X)</mat-label>
-            <input matInput type="number" [disabled]="!editModeEnabled()" [value]="sizeX()" (input)="sizeX.set(getCorrectSize(xInput.valueAsNumber || this.minSize))" #xInput>
-        </mat-form-field>
-        <mat-form-field appearance="outline" subscriptSizing="dynamic">
-            <mat-label>Wysokość (Y)</mat-label>
-            <input matInput type="number" [disabled]="!editModeEnabled()" [value]="sizeY()" (input)="sizeY.set(getCorrectSize(yInput.valueAsNumber || this.minSize))" #yInput>
-        </mat-form-field>
-        <button matButton="filled" (click)="editModeToggle()">
-            {{editModeEnabled() ? 'Zatwierdź' : 'Odblokuj zmianę rozmiaru'}}
-        </button>
-    </div>
+    @if(!layoutPresent()){
+        <div class="controls-group">    
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Szerokość (X)</mat-label>
+                <input matInput type="number" [disabled]="!editModeEnabled()" [value]="sizeX()" (input)="sizeX.set(getCorrectSize(xInput.valueAsNumber || this.minSize))" #xInput>
+            </mat-form-field>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Wysokość (Y)</mat-label>
+                <input matInput type="number" [disabled]="!editModeEnabled()" [value]="sizeY()" (input)="sizeY.set(getCorrectSize(yInput.valueAsNumber || this.minSize))" #yInput>
+            </mat-form-field>
+            <button matButton="filled" (click)="editModeToggle()">
+                {{editModeEnabled() ? 'Zatwierdź' : 'Odblokuj zmianę rozmiaru'}}
+            </button>
+        </div>
+    }
     @if(layoutPresent()){
     <div class="controls-group">
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
@@ -30,6 +32,25 @@
 
 <div class="warehouse-orders">
     <div class="warehouse-container">
+        <div class="warehouse-selector">
+            <div class="selector-controls">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <mat-label>Wybierz układ magazynu</mat-label>
+                    <mat-select [value]="selectedLayoutDraft()" (valueChange)="selectedLayoutDraft.set($event)">
+                        <mat-option value="new">+ Dodaj nowy</mat-option>
+                        @for (layout of formattedLayouts(); track layout.id) {
+                            <mat-option [value]="layout.id">{{ layout.label }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+                <button matButton="filled" (click)="applySelectedLayout()" [disabled]="selectedLayoutDraft() === null">
+                    Zastosuj
+                </button>
+            </div>
+            <div class="current-layout-info">
+                Aktualny wybrany układ: <strong>{{ layoutId() === null ? "Nowy (tryb tworzenia)" : layoutId() }}</strong>
+            </div>
+        </div>
         <div class="warehouse-grid" 
             [style.width.px]="gridWidthPx()" 
             [style.height.px]="gridHeightPx()">
@@ -78,9 +99,7 @@
                 Garaż
             </div>
             <app-delivery-zone [packages]="this.allocatedPackages()"></app-delivery-zone>
-            <div class="sending-zone">
-                Wydania
-            </div>
+            <app-sending-zone [packages]="this.droppedPackages()"></app-sending-zone>
             
         </div>
         <div class="confirm-button">

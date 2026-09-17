@@ -71,6 +71,35 @@
     }
 }
 
+.warehouse-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    .selector-controls {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+
+        mat-form-field {
+            min-width: 280px;
+        }
+    }
+
+    .current-layout-info {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.7);
+
+        strong {
+            color: var(--mat-sys-primary, #1976d2);
+        }
+    }
+}
+
 .warehouse-container {
     padding: 50px; /* Większy padding żeby garaż nie ucięło przy małym ekranie */
     background-color: var(--mat-sys-on-primary);
@@ -128,22 +157,3 @@
 }
 
 
-.sending-zone {
-    position: absolute;
-    /* Przesunięcie w prawo o 2 kratki od prawej krawędzi to po prostu right: -2 kratki */
-    right: calc(var(--grid-cell-size) * -2); 
-    top: 0; 
-    
-    width: calc(var(--grid-cell-size) * 2 - 2px);
-    height: calc(var(--grid-cell-size) * 2 - 2px); 
-    
-    background-color: #93e784;
-    border: 2px solid #6ca35e;
-    border-left: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-}

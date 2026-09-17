@@ -20,7 +20,8 @@ export interface PackageStoredEvent {
 export interface PackagePickedEvent {
     packageId: number;
     forkliftId: number;
-    layoutId: number
+    layoutId: number;
+    taskType: string;
 }
 
 export interface PackageDroppedEvent {

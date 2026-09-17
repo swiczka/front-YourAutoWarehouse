@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { GridCellData } from '../helpers/grid.helpers';
 import { LayoutDto } from '../dto/LayoutDto';
-
+import { LayoutIdDto } from '../dto/LayoutIdDto';
 @Service()
 export class LayoutServiceApi {
     updateForkliftNumber(newForkliftNumber: number) {
@@ -24,8 +24,14 @@ export class LayoutServiceApi {
     }
 
     getLatestLayout(){
-        return this.http.get<LayoutDto>(`/${this.apiName}/layout`);
+        return this.http.get<LayoutDto>(`/${this.apiName}/layout/latest`);
     }
-    
 
+    getUserLayoutIds(){
+        return this.http.get<LayoutIdDto[]>(`/${this.apiName}/layouts`);
+    }
+
+    getLayoutById(id: number){
+        return this.http.get<LayoutDto>(`/${this.apiName}/layout/${id}`);
+    }
 }

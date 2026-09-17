@@ -4,4 +4,5 @@ export interface LayoutDto {
     id: number;
     forkliftNumber: number;
     gridData: GridCellData[];
+    createdAt?: string;
 }

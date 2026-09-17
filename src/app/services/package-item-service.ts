@@ -4,33 +4,43 @@ import { PackageItemServiceApi } from '../api-services/package-item-service-api'
 import { Coordinate } from '../helpers/grid.helpers';
 import { InboundOrderDto } from '../dto/InboundOrderDto';
 import { PackageAllocatedEvent, PackagePickedEvent, PackageStoredEvent } from '../events/PackageLocationEvent';
+import { PackageDroppedEvent } from '../events/PackageDroppedEvent';
 
 @Service()
 export class PackageItemService {
-   
-
-    packages = signal<Map<string, PackageItemReadDto>>(new Map());
+    
+    packages = signal<PackageItemReadDto[]>([]);
 
     deliveredPackages = signal<PackageItemReadDto[]>([]);
+
+    sentPackages = signal<PackageItemReadDto[]>([]);
 
     readonly allocatedPackages = computed(() =>
         this.deliveredPackages().filter(pkg => pkg.status === 'ALLOCATED')
     );
 
     readonly storedPackages = computed(() =>
-        Array.from(this.packages().values()).filter(pkg => pkg.status === 'STORED' && !pkg.outboundOrderId)
+        this.packages().filter(pkg => pkg.status === 'STORED' && !pkg.outboundOrderId)
     );
+
+    readonly droppedPackages = computed(() =>
+        this.sentPackages().filter(pkg => pkg.status === 'DROPPED')
+    );
+
+    readonly packagesByCoords = computed(() => {
+        const lookup = new Map<string, PackageItemReadDto>();
+        for (const pkg of this.packages()) {
+            lookup.set(this.cordsToKey(pkg.x, pkg.y), pkg);
+        }
+        return lookup;
+    });
 
     packageServiceApi = inject(PackageItemServiceApi);
 
     addPackagesOnLayoutInit(layoutId: number){
         this.packageServiceApi.getPackagesByLayoutId(layoutId).subscribe({
             next: (newPackages) => {
-                const newCells = new Map<string, PackageItemReadDto>();
-                newPackages.forEach(pkg => {
-                    newCells.set(this.cordsToKey(pkg.x, pkg.y), pkg);
-                });
-                this.packages.set(newCells);
+                this.packages.set(newPackages);
             },
             error: (error) => {
                 console.error('Error fetching packages:', error);
@@ -53,16 +63,28 @@ export class PackageItemService {
             status: 'STORED'
         };
 
-        this.packages.update(currentMap => new Map(currentMap).set(this.cordsToKey(event.x, event.y), storedPackage));
+        this.packages.update(pkgs => [...pkgs, storedPackage]);
     }
 
     handlePickedEvent(event: PackagePickedEvent) {
-        this.deliveredPackages.update(pkgs =>
-            pkgs.map(p => p.id === event.packageId 
-                ? { ...p, status: 'IN_TRANSIT' } 
-                : p
-            )
-        );
+        if(event.taskType === "INBOUND"){
+            this.deliveredPackages.update(pkgs =>
+                pkgs.map(p => p.id === event.packageId 
+                    ? { ...p, status: 'IN_TRANSIT' } 
+                    : p
+                )
+            );  
+        }
+        else if(event.taskType === "OUTBOUND"){
+            const pkg = this.packages().find(p => p.id === event.packageId);
+            if (!pkg) {
+                return;
+            }
+
+            this.packages.update(pkgs => pkgs.filter(p => p.id !== event.packageId));
+
+            this.sentPackages.update(pkgs => [...pkgs, { ...pkg, status: 'IN_TRANSIT' }]);
+        } 
     }
 
     handleAllocatedEvent(event: PackageAllocatedEvent) {
@@ -78,6 +100,15 @@ export class PackageItemService {
       };
       this.deliveredPackages.update(prev => [...prev, newPackage]);
     }
+
+    handleDroppedEvent(event: PackageDroppedEvent) {
+        this.sentPackages.update(pkgs =>
+            pkgs.map(p => p.id === event.packageId 
+                ? { ...p, x: event.x, y: event.y, status: 'DROPPED' } 
+                : p
+            )
+        );
+    }
     
     private cordsToKey(x: number, y: number){
         return `${x}, ${y}`;
@@ -89,8 +120,6 @@ export class PackageItemService {
     }
 
     getByCoords(x: number, y: number) : PackageItemReadDto | null {
-        const key = this.cordsToKey(x, y);
-        const cell = this.packages().get(key);
-        return cell ? cell : null;
+        return this.packagesByCoords().get(this.cordsToKey(x, y)) ?? null;
     }
 }

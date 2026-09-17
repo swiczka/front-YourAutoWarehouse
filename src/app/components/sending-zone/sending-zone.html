@@ -1,0 +1,42 @@
+<span class="zone-title">Wydania</span>
+@if (hasPackages()) {
+  <span class="package-count">({{ packages().length }})</span>
+}
+
+@if (isPopupOpen() && hasPackages()) {
+  <div class="sending-popup" (click)="$event.stopPropagation()">
+    <div class="popup-header">
+      <span class="popup-title-text">Strefa wydań ({{ packages().length }})</span>
+      <button matIconButton (click)="closePopup($event)" aria-label="Zamknij" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" viewBox="0 -960 960 960">
+          <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+        </svg>
+      </button>
+    </div>
+
+    <table mat-table [dataSource]="packages()" class="mat-elevation-z1">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let pkg"> {{ pkg.id }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Nazwa </th>
+        <td mat-cell *matCellDef="let pkg"> {{ pkg.name }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef> Status </th>
+        <td mat-cell *matCellDef="let pkg"> {{ pkg.status }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="orderId">
+        <th mat-header-cell *matHeaderCellDef> Zlecenie </th>
+        <td mat-cell *matCellDef="let pkg"> #{{ pkg.outboundOrderId ?? pkg.inboundOrderId }} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+}

@@ -1,6 +1,7 @@
 :host {
     position: absolute;
     display: flex;
+    transition: left 0.49s linear, bottom 0.49s linear;
 }
 
 .forklift {
