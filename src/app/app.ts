@@ -1,12 +1,11 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { Mainarea } from './mainarea/mainarea';
 import { Header } from './components/header/header';
 import { ToastHost } from './components/ui/toast/toast';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Mainarea, Header, ToastHost],
+  imports: [Mainarea, Header, ToastHost],
   template: `
     <app-header/>
     <main>
