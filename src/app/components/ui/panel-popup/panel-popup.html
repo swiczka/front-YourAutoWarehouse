@@ -1,0 +1,14 @@
+<div class="bar">
+    <div class="bar__text">
+        <span class="bar__title">{{ title() }}</span>
+        @if (this.subtitle(); as subtitle) {
+            <span class="bar__subtitle">{{ subtitle }}</span>
+        }
+    </div>
+    <button type="button" class="bar__close" (click)="close.emit()" aria-label="Zamknij">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+</div>
+<div class="body yaw-scroll">
+    <ng-content></ng-content>
+</div>

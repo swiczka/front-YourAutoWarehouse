@@ -1,0 +1,15 @@
+// leaves room for the zone tiles hanging outside the grid (2 cells on each side)
+:host {
+  display: block;
+  padding: 36px calc(var(--grid-cell-size) * 2 + 8px) 40px;
+  overflow-x: auto;
+}
+
+// cells, forklifts and zones are positioned absolutely inside it
+.grid {
+  position: relative;
+  margin: 0 auto;
+  box-sizing: content-box;
+  border: var(--yaw-rule);
+  background: var(--yaw-cream-2);
+}

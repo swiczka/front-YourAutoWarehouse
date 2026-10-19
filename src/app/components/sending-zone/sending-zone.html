@@ -1,42 +1,33 @@
-<span class="zone-title">Wydania</span>
-@if (hasPackages()) {
-  <span class="package-count">({{ packages().length }})</span>
-}
+<button type="button" class="yaw-zone zone" (click)="toggle.emit()" [attr.aria-expanded]="open()"
+  [attr.aria-label]="'Strefa wydań, paczki: ' + packages().length">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M10 7h11v9H10z"></path><path d="M10 10H6l-3 3v3h7"></path><circle cx="7" cy="18" r="1.8"></circle><circle cx="17" cy="18" r="1.8"></circle></svg>
+  WYDANIA
+  @if (packages().length > 0) {
+    <span class="yaw-zone__badge badge" aria-hidden="true">{{ packages().length }}</span>
+  }
+</button>
 
-@if (isPopupOpen() && hasPackages()) {
-  <div class="sending-popup" (click)="$event.stopPropagation()">
-    <div class="popup-header">
-      <span class="popup-title-text">Strefa wydań ({{ packages().length }})</span>
-      <button matIconButton (click)="closePopup($event)" aria-label="Zamknij" type="button">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" viewBox="0 -960 960 960">
-          <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
-        </svg>
-      </button>
-    </div>
-
-    <table mat-table [dataSource]="packages()" class="mat-elevation-z1">
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef> ID </th>
-        <td mat-cell *matCellDef="let pkg"> {{ pkg.id }} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Nazwa </th>
-        <td mat-cell *matCellDef="let pkg"> {{ pkg.name }} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef> Status </th>
-        <td mat-cell *matCellDef="let pkg"> {{ pkg.status }} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="orderId">
-        <th mat-header-cell *matHeaderCellDef> Zlecenie </th>
-        <td mat-cell *matCellDef="let pkg"> #{{ pkg.outboundOrderId ?? pkg.inboundOrderId }} </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-  </div>
+@if (open()) {
+  <app-panel-popup class="popup" [title]="'STREFA WYDAŃ (' + packages().length + ')'" subtitle="Wydane w tej sesji przeglądarki" (close)="toggle.emit()">
+    @if (packages().length > 0) {
+      <table class="yaw-table">
+        <thead>
+          <tr><th>ID</th><th>Nazwa</th><th>Status</th><th>Zlecenie</th></tr>
+        </thead>
+        <tbody>
+          @for (pkg of packages(); track pkg.id) {
+            @let status = statusView(pkg.status);
+            <tr>
+              <td class="yaw-num">{{ pkg.id }}</td>
+              <td>{{ pkg.name }}</td>
+              <td><span class="yaw-chip" [class]="'yaw-chip--' + status.variant">{{ status.label }}</span></td>
+              <td class="yaw-num">#{{ pkg.outboundOrderId ?? pkg.inboundOrderId }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p class="yaw-empty">W tej sesji nic jeszcze nie wydano.</p>
+    }
+  </app-panel-popup>
 }

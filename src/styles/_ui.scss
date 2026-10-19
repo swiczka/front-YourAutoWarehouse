@@ -122,6 +122,47 @@
   }
 }
 
+// zone tile next to the map (delivery, dispatch, garage)
+.yaw-zone {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0;
+  border: var(--yaw-rule);
+  border-radius: 0;
+  background: var(--yaw-cream-2);
+  color: var(--yaw-ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font: 800 11px var(--yaw-font);
+  letter-spacing: 0.5px;
+  cursor: pointer;
+
+  // counter in the corner
+  &__badge {
+    position: absolute;
+    top: -12px;
+    width: 24px;
+    height: 24px;
+    box-sizing: border-box;
+    border: var(--yaw-rule);
+    font: 700 13px var(--yaw-font-num);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.yaw-empty {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
 // floating panel (popups on the map)
 .yaw-popup {
   background: var(--yaw-cream);

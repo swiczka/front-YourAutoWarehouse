@@ -1,0 +1,52 @@
+:host {
+  display: block;
+  z-index: 10;
+  min-width: 300px;
+  color: var(--yaw-ink);
+  font-weight: 400;
+  cursor: default;
+  text-align: left;
+}
+
+.bar {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  border-bottom: var(--yaw-rule);
+}
+
+.bar__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+}
+
+.bar__title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.bar__subtitle {
+  font-size: 12px;
+  color: var(--yaw-muted);
+}
+
+.bar__close {
+  flex: 0 0 40px;
+  border: none;
+  border-left: var(--yaw-rule);
+  background: transparent;
+  color: var(--yaw-ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// long lists scroll inside the popup
+.body {
+  max-height: 300px;
+  overflow-y: auto;
+}

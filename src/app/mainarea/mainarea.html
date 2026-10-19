@@ -1,6 +1,8 @@
-<div class="controls">
-    @if(!layoutPresent()){
-        <div class="controls-group">    
+@if (drawingModeEnabled()) {
+<!-- layout editor (restyled in a later phase) -->
+<div class="editor">
+    <div class="controls">
+        <div class="controls-group">
             <mat-form-field appearance="outline" subscriptSizing="dynamic">
                 <mat-label>Szerokość (X)</mat-label>
                 <input matInput type="number" [disabled]="!editModeEnabled()" [value]="sizeX()" (input)="sizeX.set(getCorrectSize(xInput.valueAsNumber || this.minSize))" #xInput>
@@ -13,116 +15,70 @@
                 {{editModeEnabled() ? 'Zatwierdź' : 'Odblokuj zmianę rozmiaru'}}
             </button>
         </div>
-    }
-    @if(layoutPresent()){
-    <div class="controls-group">
-        <mat-form-field appearance="outline" subscriptSizing="dynamic">
-            <mat-label>Liczba wózków</mat-label>
-            <input matInput type="number" [min]="minForklift" [max]="maxForklift" [value]="draftForkliftNumber()" (input)="draftForkliftNumber.set(getCorrectForkliftNumber(forkliftInput.valueAsNumber || this.minForklift))" #forkliftInput>
-        </mat-form-field>
-        <button matButton="filled" (click)="confirmForkliftNumber()">
-            Zatwierdź
-        </button>
-        <button matButton="outlined" (click)="revertForkliftNumber()">
-            Cofnij zmiany
-        </button>
     </div>
-    }
-</div>
 
-<div class="warehouse-orders">
     <div class="warehouse-container">
         <div class="warehouse-grid"
-            [style.width.px]="gridWidthPx()" 
+            [style.width.px]="gridWidthPx()"
             [style.height.px]="gridHeightPx()">
-            
+
             <!-- Renderujemy wszystkie komórki za pomocą pętli @for -->
-            @if(drawingModeEnabled()){
-                @for (cell of drawingCells(); track cell.coordinate.x + '-' + cell.coordinate.y) {
-                <app-editgridcell 
-                    [coordinate]="cell.coordinate" 
-                    [allowedBranchings]="cell.allowedBranchings"
-                    [selected]="cell.selected"
-                    (expandRequest)="handleGridExpansion($event)">
-                </app-editgridcell>
-                }
+            @for (cell of drawingCells(); track cell.coordinate.x + '-' + cell.coordinate.y) {
+            <app-editgridcell
+                [coordinate]="cell.coordinate"
+                [allowedBranchings]="cell.allowedBranchings"
+                [selected]="cell.selected"
+                (expandRequest)="handleGridExpansion($event)">
+            </app-editgridcell>
             }
-            @else {
-                @for (cell of cells().values(); track cell.coordinates.x + '-' + cell.coordinates.y) {
-                <app-gridcell 
-                    [coordinate]="cell.coordinates" 
-                    [allowedDirections]="cell.allowedDirections"
-                    [isRoad]="cell.isRoad"
-                    [isShelf]="cell.isShelf"
-                    [package]="this.getPackageByCoord(cell.coordinates.x, cell.coordinates.y)"
-                    (cellClick)="selectedPackage.set($event)">
-                </app-gridcell>
-                }
-                @for (forklift of forklifts().values(); track forklift.id) {
-                    @if(!(forklift.x === 0 && forklift.y === 0)){
-                        <app-forklift 
-                            [id]="forklift.id" 
-                            [x]="forklift.x"
-                            [y]="forklift.y">
-                        </app-forklift>
-                    }
-                }
-                @if (selectedPackage(); as selectedPkg) {
-                <app-package-popup 
-                    [package]="selectedPkg"
-                    (close)="selectedPackage.set(null)">
-                </app-package-popup>
-                }
-            }
-            
+
             <!-- Garaż wózków widłowych (Forklift Garage) -->
             <div class="forklift-garage">
                 Garaż
             </div>
-            <app-delivery-zone [packages]="this.allocatedPackages()"></app-delivery-zone>
-            <app-sending-zone [packages]="this.droppedPackages()"></app-sending-zone>
-            
         </div>
-        @if(drawingModeEnabled()){
         <div class="confirm-button">
                 <button matButton="filled" (click)="confirmLayout()">Zatwierdź siatkę</button>
         </div>
-        }
-        
     </div>
-    @if(!this.drawingModeEnabled()){
-    <mat-sidenav-container class="sidenav-container">
-        <mat-sidenav #sidenav mode="side" position="end" [(opened)]="sidebarOpened">
-            <div class="orders-container">
-                @if (orderPanelMode() === "new") {
-                    @if (layoutId(); as currentId) {
-                        <app-order-panel [layoutId]="currentId" />
-                    }
-                }
-                @if (orderPanelMode() === "inbound"){
-                    @if (layoutId(); as currentId) {
-                        <app-orders-view [layoutId]="currentId" orderType="inbound" />
-                    }
-                }
-                @if (orderPanelMode() === "outbound"){
-                    @if (layoutId(); as currentId) {
-                        <app-orders-view [layoutId]="currentId" orderType="outbound" />
-                    }
-                }
-            </div>
-        </mat-sidenav>
-        <mat-sidenav-content>
-            <div class="menu-buttons">
-                <button matIconButton (click)="sidenav.toggle()">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24px"><path d="M460-320v-320L300-480l160 160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm440-80h120v-560H640v560Zm-80 0v-560H200v560h360Zm80 0h120-120Z"/></svg>
-                </button>
-                <button matButton (click)="orderPanelMode.set('inbound')">Zamówienia dostawy</button>
-                <button matButton (click)="orderPanelMode.set('outbound')">Zamówienia wydania</button>
-                <button matButton (click)="orderPanelMode.set('new')">+ Dodaj nowe</button>
-            </div>
-        </mat-sidenav-content>
-    </mat-sidenav-container>
-    }
-   
 </div>
+} @else {
+<div class="control-room">
+    <section class="hall" aria-label="Hala magazynu">
+        <!-- forklift count moves to the settings dialog in a later phase -->
+        <div class="controls">
+            <div class="controls-group">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <mat-label>Liczba wózków</mat-label>
+                    <input matInput type="number" [min]="minForklift" [max]="maxForklift" [value]="draftForkliftNumber()" (input)="draftForkliftNumber.set(getCorrectForkliftNumber(forkliftInput.valueAsNumber || this.minForklift))" #forkliftInput>
+                </mat-form-field>
+                <button matButton="filled" (click)="confirmForkliftNumber()">
+                    Zatwierdź
+                </button>
+                <button matButton="outlined" (click)="revertForkliftNumber()">
+                    Cofnij zmiany
+                </button>
+            </div>
+        </div>
+        <app-hall-header />
+        <app-warehouse-map />
+    </section>
 
+    <aside class="side" aria-label="Zlecenia">
+        <div class="tabs" role="group" aria-label="Widok zleceń">
+            <button type="button" class="tabs__tab" [class.is-active]="orderPanelMode() === 'inbound'" [attr.aria-pressed]="orderPanelMode() === 'inbound'" (click)="orderPanelMode.set('inbound')">DOSTAWY</button>
+            <button type="button" class="tabs__tab" [class.is-active]="orderPanelMode() === 'outbound'" [attr.aria-pressed]="orderPanelMode() === 'outbound'" (click)="orderPanelMode.set('outbound')">WYDANIA</button>
+            <button type="button" class="tabs__tab" [class.is-active]="orderPanelMode() === 'new'" [attr.aria-pressed]="orderPanelMode() === 'new'" (click)="orderPanelMode.set('new')">+ NOWE ZLECENIE</button>
+        </div>
+        <div class="side__content">
+            @if (layoutId(); as currentId) {
+                @switch (orderPanelMode()) {
+                    @case ('inbound') { <app-orders-view [layoutId]="currentId" orderType="inbound" /> }
+                    @case ('outbound') { <app-orders-view [layoutId]="currentId" orderType="outbound" /> }
+                    @case ('new') { <app-order-panel [layoutId]="currentId" /> }
+                }
+            }
+        </div>
+    </aside>
+</div>
+}

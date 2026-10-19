@@ -2,24 +2,58 @@
     position: absolute;
     width: var(--grid-cell-size);
     height: var(--grid-cell-size);
-    
+    box-sizing: border-box;
+    padding: 5px;
+    background: var(--yaw-cream-2);
+    box-shadow: inset 0 0 0 0.5px #ebd3a8;
+
+    &.is-road {
+        padding: 0;
+        background: var(--yaw-road);
+        // subtle seams so single road cells stay readable
+        box-shadow: inset 0 0 0 0.5px var(--yaw-road-edge);
+    }
+}
+
+// shelf slot drawn as a rack: frame + thin horizontal boards
+.rack {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    border: var(--yaw-rule);
+    border-radius: 0;
+    background: var(--yaw-cream-2);
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-    font-size: 12px;
-    color: rgb(103, 103, 103);
+    cursor: pointer;
 
-    &.is-road,
-    &.is-selected {
-        background-color: rgb(187, 187, 187);
+    &--empty {
+        cursor: default;
+        background: repeating-linear-gradient(0deg, var(--yaw-cream-2) 0 9px, var(--yaw-ink) 9px 11px);
     }
-    &.is-shelf {
-        background-color: rgb(233, 200, 139);
+
+    &--highlighted {
+        background: var(--yaw-ink);
     }
-    &.has-package {
-        background-color: rgb(233, 161, 102);
-        cursor: pointer;
-    }
+}
+
+// package on the shelf: orange box with a tape stripe
+.box {
+    width: 18px;
+    height: 15px;
+    box-sizing: border-box;
+    border: 1.5px solid var(--yaw-ink);
+    background: linear-gradient(90deg, var(--yaw-accent) 0 7px, var(--yaw-ink) 7px 10px, var(--yaw-accent) 10px);
+}
+
+// debug overlay (settings: coordinates)
+.coords {
+    position: absolute;
+    left: 2px;
+    bottom: 1px;
+    font: 500 9px var(--yaw-font-num);
+    color: var(--yaw-muted);
+    pointer-events: none;
 }

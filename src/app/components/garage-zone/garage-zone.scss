@@ -1,0 +1,45 @@
+// tile glued to the bottom-left corner of the map, 2 x 2 cells
+:host {
+  position: absolute;
+  left: calc(var(--grid-cell-size) * -2);
+  // -2px = the grid's border, so the tile lines up with the grid's outer edge
+  bottom: -2px;
+  width: calc(var(--grid-cell-size) * 2);
+  height: calc((var(--grid-cell-size) * 2) + 3px);
+
+  &.is-open {
+    z-index: 20;
+  }
+}
+
+.zone {
+  border-right: none;
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3px;
+  max-width: 70px;
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--yaw-ink);
+}
+
+.forklift {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// opens upwards, the tile sits at the bottom of the map
+.popup {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  width: 320px;
+}

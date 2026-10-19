@@ -1,36 +1,23 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { PackageItemReadDto } from '../../dto/PackageItemReadDto';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
+import { PanelPopup } from '../ui/panel-popup/panel-popup';
+import { getStatusView } from '../../helpers/status.helpers';
 
 @Component({
   selector: 'app-sending-zone',
-  imports: [MatTableModule, MatButtonModule],
+  imports: [PanelPopup],
   templateUrl: './sending-zone.html',
   styleUrl: './sending-zone.scss',
   host: {
-    '[class.has-packages]': 'hasPackages()',
-    '(click)': 'togglePopup()',
+    '[class.is-open]': 'open()',
   },
 })
 export class SendingZone {
+  // packages sent during this browser session (memory only, gone after reload)
   packages = input.required<PackageItemReadDto[]>();
+  // the parent keeps only one map popup open at a time
+  open = input(false);
+  toggle = output<void>();
 
-  hasPackages = computed(() => this.packages().length > 0);
-  isPopupOpen = signal(false);
-
-  displayedColumns: string[] = ['id', 'name', 'status', 'orderId'];
-
-  togglePopup() {
-    if (this.hasPackages()) {
-      this.isPopupOpen.update((open) => !open);
-    }
-  }
-
-  closePopup(event?: Event) {
-    if (event) {
-      event.stopPropagation();
-    }
-    this.isPopupOpen.set(false);
-  }
+  protected readonly statusView = getStatusView;
 }

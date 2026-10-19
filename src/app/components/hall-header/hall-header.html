@@ -1,0 +1,12 @@
+<div class="title">
+    <h1>HALA_UKŁAD #{{ layoutId() }}</h1>
+    <span class="size">Rozmiar hali: <b>{{ sizeX() }} × {{ sizeY() }}</b></span>
+</div>
+<dl class="stats">
+    @for (stat of stats(); track stat.label) {
+        <div class="stat">
+            <dt class="stat__label">{{ stat.label }}</dt>
+            <dd class="stat__value yaw-num">{{ stat.value }}</dd>
+        </div>
+    }
+</dl>

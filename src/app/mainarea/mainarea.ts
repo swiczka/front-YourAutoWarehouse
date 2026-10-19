@@ -3,54 +3,34 @@ import { EditGridCell } from './editgridcell/editgridcell';
 import { Coordinate, Direction } from '../helpers/grid.helpers';
 import { EditGridService } from '../services/edit-grid-service';
 import { GRID_CONFIG } from '../config/grid.config';
-import { GridService } from '../services/grid-service';
-import { Gridcell } from './gridcell/gridcell';
-import { ForkliftService } from '../services/forklift-service';
-import { Forklift } from "../components/forklift/forklift";
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {FormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import { OrderPanel } from '../components/order-panel/order-panel';
-import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatIconModule} from '@angular/material/icon';
 import { OrdersView } from '../components/orders-view/orders-view';
-import { PackageItemService } from '../services/package-item-service';
-import { PackageItemReadDto } from '../dto/PackageItemReadDto';
-import { PackagePopup } from '../components/package-popup/package-popup';
-import { DeliveryZone } from '../components/delivery-zone/delivery-zone';
-import { SendingZone } from '../components/sending-zone/sending-zone';
 import { LayoutStateService } from '../services/layout-state-service';
+import { HallHeader } from '../components/hall-header/hall-header';
+import { WarehouseMap } from '../components/warehouse-map/warehouse-map';
 
 @Component({
   selector: 'app-mainarea',
   imports: [EditGridCell,
-    Gridcell,
-    MatSidenavModule,
-    Forklift,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     OrderPanel,
     OrdersView,
-    MatIconModule,
-    PackagePopup,
-    DeliveryZone,
-    SendingZone],
+    HallHeader,
+    WarehouseMap],
   templateUrl: './mainarea.html',
   styleUrl: './mainarea.scss',
 })
 export class Mainarea implements OnInit, OnDestroy{
 
   private editGridService = inject(EditGridService);
-  private gridService = inject(GridService)
-  private forkliftService = inject(ForkliftService);
-  private packageService = inject(PackageItemService);
   private layoutState = inject(LayoutStateService);
-
-  readonly allocatedPackages = this.packageService.allocatedPackages;
-  readonly droppedPackages = this.packageService.droppedPackages;
 
   // layout state lives in LayoutStateService (shared with the header)
   readonly sizeX = this.layoutState.sizeX;
@@ -58,7 +38,6 @@ export class Mainarea implements OnInit, OnDestroy{
   readonly layoutId = this.layoutState.layoutId;
   readonly forkliftNumber = this.layoutState.forkliftNumber;
   readonly drawingModeEnabled = this.layoutState.drawingModeEnabled;
-  readonly layoutPresent = this.layoutState.layoutPresent;
 
   // resets to the saved value whenever another layout is loaded
   draftForkliftNumber = linkedSignal(() => this.forkliftNumber());
@@ -71,22 +50,12 @@ export class Mainarea implements OnInit, OnDestroy{
   minForklift : number = 1;
   maxForklift : number = 12;
 
-  gridWidthPx = computed(() => this.drawingModeEnabled() ? this.sizeX() * GRID_CONFIG.editGridCellSizePx : this.sizeX() * GRID_CONFIG.gridCellSizePx * 2);
-  gridHeightPx = computed(() => this.drawingModeEnabled() ? this.sizeY() * GRID_CONFIG.editGridCellSizePx : this.sizeY() * GRID_CONFIG.gridCellSizePx * 2);
+  gridWidthPx = computed(() => this.sizeX() * GRID_CONFIG.editGridCellSizePx);
+  gridHeightPx = computed(() => this.sizeY() * GRID_CONFIG.editGridCellSizePx);
 
   drawingCells = computed(() => this.editGridService.cells());
 
-  cells = computed(() => this.gridService.cells());
-  forklifts = computed(() => this.forkliftService.forklifts());
-
-  sidebarOpened = signal(false);
-
-  orderPanelMode = signal<"new" | "inbound" | "outbound">("new");
-  // closes the package popup whenever another layout is loaded
-  selectedPackage = linkedSignal<number | null, PackageItemReadDto | null>({
-    source: this.layoutId,
-    computation: () => null
-  });
+  orderPanelMode = signal<"new" | "inbound" | "outbound">("inbound");
 
   ngOnInit(): void {
     this.layoutState.init();
@@ -94,10 +63,6 @@ export class Mainarea implements OnInit, OnDestroy{
 
   ngOnDestroy(): void {
     this.layoutState.destroy();
-  }
-
-  getPackageByCoord(x: number, y: number) : PackageItemReadDto | null {
-    return this.packageService.getByCoords(x, y);
   }
 
   editModeToggle() {

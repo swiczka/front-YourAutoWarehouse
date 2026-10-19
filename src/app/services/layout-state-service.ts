@@ -89,6 +89,7 @@ export class LayoutStateService {
           this.forkliftService.forklifts.set(new Map());
           this.packageService.deliveredPackages.set([]);
           this.packageService.sentPackages.set([]);
+          this.packageService.carriedByForklift.set(new Map());
 
           this.showLayout(layoutDto);
           this.openSnackBar(`Załadowano układ ID: ${layoutDto.id}`);
@@ -119,6 +120,7 @@ export class LayoutStateService {
     this.packageService.packages.set([]);
     this.packageService.deliveredPackages.set([]);
     this.packageService.sentPackages.set([]);
+    this.packageService.carriedByForklift.set(new Map());
   }
 
   saveDrawnLayout(): void {

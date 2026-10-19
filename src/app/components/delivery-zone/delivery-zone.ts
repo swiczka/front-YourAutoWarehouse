@@ -1,36 +1,30 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { PackageItemReadDto } from '../../dto/PackageItemReadDto';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
+import { PanelPopup } from '../ui/panel-popup/panel-popup';
+import { PackageItemService } from '../../services/package-item-service';
+import { getStatusView } from '../../helpers/status.helpers';
 
 @Component({
   selector: 'app-delivery-zone',
-  imports: [MatTableModule, MatButtonModule],
+  imports: [PanelPopup],
   templateUrl: './delivery-zone.html',
   styleUrl: './delivery-zone.scss',
   host: {
-    '[class.has-packages]': 'hasPackages()',
-    '(click)': 'togglePopup()',
+    '[class.is-open]': 'open()',
   },
 })
 export class DeliveryZone {
+  private packageService = inject(PackageItemService);
+
   packages = input.required<PackageItemReadDto[]>();
+  // the parent keeps only one map popup open at a time
+  open = input(false);
+  toggle = output<void>();
 
-  hasPackages = computed(() => this.packages().length > 0);
-  isPopupOpen = signal(false);
+  protected readonly statusView = getStatusView;
 
-  displayedColumns: string[] = ['id', 'name', 'status', 'orderId'];
-
-  togglePopup() {
-    if (this.hasPackages()) {
-      this.isPopupOpen.update((open) => !open);
-    }
-  }
-
-  closePopup(event?: Event) {
-    if (event) {
-      event.stopPropagation();
-    }
-    this.isPopupOpen.set(false);
+  protected target(packageId: number): string {
+    const target = this.packageService.getAllocationTarget(packageId);
+    return target ? `(${target.x}, ${target.y})` : '—';
   }
 }

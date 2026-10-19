@@ -1,0 +1,66 @@
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: var(--yaw-rule);
+}
+
+.title {
+  flex: 1 1 320px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  h1 {
+    margin: 0;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 36px;
+    letter-spacing: -1px;
+  }
+}
+
+.size {
+  font: 400 13px var(--yaw-font-num);
+  color: var(--yaw-muted);
+}
+
+// 4 equal columns; number on top, label below, same rows in every column
+.stats {
+  flex: 1 1 420px;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-left: var(--yaw-rule);
+}
+
+.stat {
+  padding: 16px 12px 12px;
+  display: flex;
+  // <dt> label must come first in HTML, but the value is shown on top
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+
+  & + & {
+    border-left: var(--yaw-rule);
+  }
+}
+
+.stat__value {
+  margin: 0;
+  height: 40px;
+  font-size: 40px;
+  line-height: 40px;
+}
+
+.stat__label {
+  min-height: 28px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 14px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}

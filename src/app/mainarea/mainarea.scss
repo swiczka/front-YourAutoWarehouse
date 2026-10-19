@@ -1,14 +1,64 @@
+// control room: map on the left, orders on the right; stacks on narrow screens
+.control-room {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+.hall {
+    flex: 999 1 800px;
+    min-width: 0;
+    border-right: var(--yaw-rule);
+}
+
+.side {
+    flex: 1 1 420px;
+    min-width: 0;
+}
+
+.side__content {
+    padding: 20px 24px 24px;
+}
+
+// three equal tabs separated by black rules
+.tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-bottom: var(--yaw-rule);
+}
+
+.tabs__tab {
+    height: 56px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: var(--yaw-ink);
+    font: 700 13px var(--yaw-font);
+    letter-spacing: 0.5px;
+    cursor: pointer;
+
+    & + & {
+        border-left: var(--yaw-rule);
+    }
+
+    &.is-active {
+        background: var(--yaw-ink);
+        color: var(--yaw-cream);
+    }
+}
+
+.editor {
+    padding: 16px;
+}
+
 .controls {
-    margin-bottom: 20px;
     display: flex;
     justify-content: space-between; /* Rozsuwa lewą i prawą grupę */
     align-items: center;
     gap: 20px;
     flex-wrap: wrap;
-
-    background-color: var(--mat-sys-on-primary);
-    border-radius: 8px;
-    padding: 12px 20px;
+    padding: 12px 24px;
+    border-bottom: var(--yaw-rule);
 
     .controls-group,
     > div {
@@ -24,78 +74,26 @@
     }
 }
 
-.warehouse-orders {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    gap: 20px;
-    min-height: 600px;
-}
-
-.orders-container {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 16px;
-    background-color: transparent;
-    overflow-x: hidden;
-}
-
-.menu-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: flex-start;
-}
-
-.sidenav-container {
-    background-color: var(--mat-sys-on-primary);
-    border-radius: 8px;
-    align-self: stretch;
-    overflow: hidden;
-
-    mat-sidenav-content {
-        padding: 12px;
-        background: transparent;
-    }
-
-    mat-sidenav {
-        width: 400px;
-        max-width: 90vw;
-        background: transparent;
-        border-left: 1px solid rgba(0, 0, 0, 0.08);
-        overflow-x: hidden;
-    }
-
-    svg {
-        fill: var(--mat-sys-primary);
-    }
-}
-
 .warehouse-container {
     padding: 50px; /* Większy padding żeby garaż nie ucięło przy małym ekranie */
-    background-color: var(--mat-sys-on-primary);
-    border-radius: 8px;
     overflow: auto;
     min-height: 400px;
-    flex: 1;
 }
 
 .warehouse-grid {
     margin: 0 auto; /* Klasyczny sposób na środek bez psucia scrollowania! */
-    background-color: white;
-    border: 2px dashed #999;
+    background-color: var(--yaw-cream-2);
+    border: 2px dashed var(--yaw-ink);
     /* Używamy zmiennej zamiast sztywnych 50px */
     background-size: var(--grid-cell-size) var(--grid-cell-size);
     display: flex;
     transition: width 0.1s, height 0.1s;
-    position: relative; 
+    position: relative;
 
     p {
-        background-color: rgba(255, 255, 255, 0.8);
-            padding: 4px 8px;
-        border-radius: 4px;
+        padding: 4px 8px;
         font-weight: bold;
-        color: #333;
+        color: var(--yaw-ink);
     }
 }
 
@@ -103,28 +101,22 @@
     display: flex;
     justify-content: center;
     margin-top: 20px;
-
 }
 
 .forklift-garage {
     position: absolute;
     /* Szerokość to 2 kratki, więc w lewo też o 2 kratki */
-    left: calc(var(--grid-cell-size) * -2); 
-    bottom: 0; 
-    
-    width: calc(var(--grid-cell-size) * 2 - 2px);
-    height: calc(var(--grid-cell-size) * 2 - 2px);
-    
-    background-color: #ffcc00;
-    border: 2px solid #b38f00;
+    left: calc(var(--grid-cell-size) * -2);
+    bottom: 0;
+
+    width: calc(var(--grid-cell-size) * 2);
+    height: calc(var(--grid-cell-size) * 2);
+
+    background-color: var(--yaw-cream-2);
+    border: var(--yaw-rule);
     border-right: none; /* Żeby łączyło się ładnie z siatką bez podwójnej ramki */
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    color: #333;
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
 }
-
-

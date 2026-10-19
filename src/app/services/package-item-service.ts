@@ -15,6 +15,12 @@ export class PackageItemService {
 
     sentPackages = signal<PackageItemReadDto[]>([]);
 
+    // shelf chosen by the backend for each package waiting in the delivery zone
+    allocationTargets = signal<Map<number, Coordinate>>(new Map());
+
+    // package currently on the forks, by forklift id
+    carriedByForklift = signal<Map<number, PackageItemReadDto>>(new Map());
+
     readonly allocatedPackages = computed(() =>
         this.deliveredPackages().filter(pkg => pkg.status === 'ALLOCATED')
     );
@@ -64,16 +70,21 @@ export class PackageItemService {
         };
 
         this.packages.update(pkgs => [...pkgs, storedPackage]);
+        this.releaseFromForklift(event.packageId);
     }
 
     handlePickedEvent(event: PackagePickedEvent) {
         if(event.taskType === "INBOUND"){
+            const pkg = this.deliveredPackages().find(p => p.id === event.packageId);
+            if (pkg) {
+                this.loadOnForklift(event.forkliftId, { ...pkg, status: 'IN_TRANSIT' });
+            }
             this.deliveredPackages.update(pkgs =>
-                pkgs.map(p => p.id === event.packageId 
-                    ? { ...p, status: 'IN_TRANSIT' } 
+                pkgs.map(p => p.id === event.packageId
+                    ? { ...p, status: 'IN_TRANSIT' }
                     : p
                 )
-            );  
+            );
         }
         else if(event.taskType === "OUTBOUND"){
             const pkg = this.packages().find(p => p.id === event.packageId);
@@ -84,7 +95,8 @@ export class PackageItemService {
             this.packages.update(pkgs => pkgs.filter(p => p.id !== event.packageId));
 
             this.sentPackages.update(pkgs => [...pkgs, { ...pkg, status: 'IN_TRANSIT' }]);
-        } 
+            this.loadOnForklift(event.forkliftId, { ...pkg, status: 'IN_TRANSIT' });
+        }
     }
 
     handleAllocatedEvent(event: PackageAllocatedEvent) {
@@ -99,15 +111,37 @@ export class PackageItemService {
         layoutId: event.layoutId
       };
       this.deliveredPackages.update(prev => [...prev, newPackage]);
+      this.allocationTargets.update(targets => new Map(targets).set(event.packageId, { x: event.targetX, y: event.targetY }));
     }
 
     handleDroppedEvent(event: PackageDroppedEvent) {
         this.sentPackages.update(pkgs =>
-            pkgs.map(p => p.id === event.packageId 
-                ? { ...p, x: event.x, y: event.y, status: 'DROPPED' } 
+            pkgs.map(p => p.id === event.packageId
+                ? { ...p, x: event.x, y: event.y, status: 'DROPPED' }
                 : p
             )
         );
+        this.releaseFromForklift(event.packageId);
+    }
+
+    getAllocationTarget(packageId: number): Coordinate | null {
+        return this.allocationTargets().get(packageId) ?? null;
+    }
+
+    private loadOnForklift(forkliftId: number, pkg: PackageItemReadDto) {
+        this.carriedByForklift.update(carried => new Map(carried).set(forkliftId, pkg));
+    }
+
+    private releaseFromForklift(packageId: number) {
+        this.carriedByForklift.update(carried => {
+            const next = new Map(carried);
+            for (const [forkliftId, pkg] of carried) {
+                if (pkg.id === packageId) {
+                    next.delete(forkliftId);
+                }
+            }
+            return next;
+        });
     }
     
     private cordsToKey(x: number, y: number){

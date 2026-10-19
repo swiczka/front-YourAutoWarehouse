@@ -11,11 +11,18 @@ export class ForkliftService {
         const forkliftsMap = this.forklifts();
         let forklift = forkliftsMap.get(event.forkliftId);
         if(!forklift){
-            forklift = { id: event.forkliftId, 
-                            x: event.x, 
-                            y: event.y };
+            forklift = { id: event.forkliftId,
+                            x: event.x,
+                            y: event.y,
+                            facing: 'right' };
             forkliftsMap.set(event.forkliftId, forklift);
         } else {
+            // vertical moves keep the previous facing
+            if (event.x < forklift.x) {
+                forklift.facing = 'left';
+            } else if (event.x > forklift.x) {
+                forklift.facing = 'right';
+            }
             forklift.x = event.x;
             forklift.y = event.y;
         }

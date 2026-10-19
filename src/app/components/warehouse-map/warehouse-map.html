@@ -1,0 +1,38 @@
+<div class="grid" [style.width.px]="widthPx()" [style.height.px]="heightPx()">
+    @for (cell of cells(); track cell.coordinates.x + '-' + cell.coordinates.y) {
+        @let packageItem = getPackageByCoord(cell.coordinates.x, cell.coordinates.y);
+        <app-gridcell
+            [coordinate]="cell.coordinates"
+            [allowedDirections]="cell.allowedDirections"
+            [isRoad]="cell.isRoad"
+            [isShelf]="cell.isShelf"
+            [package]="packageItem"
+            [highlighted]="packageItem !== null && packageItem.id === selectedPackageId()"
+            (cellClick)="toggle({ kind: 'package', package: $event })">
+        </app-gridcell>
+    }
+
+    @for (forklift of movingForklifts(); track forklift.id) {
+        <app-forklift
+            [id]="forklift.id"
+            [x]="forklift.x"
+            [y]="forklift.y"
+            [facing]="forklift.facing"
+            [carried]="carriedByForklift().get(forklift.id) ?? null"
+            [destination]="destinationOf(forklift.id)"
+            [selected]="forklift.id === selectedForkliftId()"
+            (toggle)="toggle({ kind: 'forklift', forkliftId: forklift.id })">
+        </app-forklift>
+    }
+
+    @if (this.openPackage(); as openPackage) {
+        <app-package-popup [package]="openPackage" (close)="closePopup()"></app-package-popup>
+    }
+
+    <app-delivery-zone [packages]="allocatedPackages()" [open]="openPopup()?.kind === 'delivery'"
+        (toggle)="toggle({ kind: 'delivery' })"></app-delivery-zone>
+    <app-sending-zone [packages]="sentPackages()" [open]="openPopup()?.kind === 'sending'"
+        (toggle)="toggle({ kind: 'sending' })"></app-sending-zone>
+    <app-garage-zone [forkliftIds]="garageForkliftIds()" [open]="openPopup()?.kind === 'garage'"
+        (toggle)="toggle({ kind: 'garage' })"></app-garage-zone>
+</div>

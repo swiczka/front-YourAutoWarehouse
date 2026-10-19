@@ -1,22 +1,74 @@
 :host {
     position: absolute;
     display: flex;
+    z-index: 2;
     transition: left 0.49s linear, bottom 0.49s linear;
+
+    &.is-selected {
+        z-index: 20;
+    }
+}
+
+.vehicle {
+    position: relative;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
 }
 
 .forklift {
     width: var(--forklift-size);
     height: var(--forklift-size);
     display: block;
+    transition: transform 0.15s;
+
+    // mirrored like a 2D game sprite when driving left
+    &--left {
+        transform: scaleX(-1);
+    }
 
     .st0,
     path,
     polygon {
         fill: var(--forklift-color);
-        stroke: #ffffff;
-        stroke-width: 44px;
+        stroke: var(--yaw-ink);
+        stroke-width: 26px;
         stroke-linecap: round;
         stroke-linejoin: round;
         paint-order: stroke fill;
     }
+
+    .cargo {
+        fill: var(--yaw-accent);
+        stroke: var(--yaw-ink);
+        stroke-width: 22px;
+    }
+}
+
+.badge {
+    position: absolute;
+    top: -6px;
+    right: -4px;
+    width: 16px;
+    height: 16px;
+    background: var(--yaw-ink);
+    color: var(--yaw-cream);
+    font-size: 10px;
+    line-height: 16px;
+    text-align: center;
+}
+
+// popup opens to the right of the vehicle and moves with it
+.popup {
+    position: absolute;
+    left: calc(100% + 8px);
+    top: -12px;
+    width: 340px;
+}
+
+.empty {
+    margin: 0;
+    padding: 10px 12px;
+    font-size: 13px;
 }

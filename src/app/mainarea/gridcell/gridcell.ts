@@ -1,7 +1,8 @@
-import { Component, computed, input, output, Signal } from '@angular/core';
+import { Component, computed, inject, input, output, Signal } from '@angular/core';
 import { Coordinate, Direction } from '../../helpers/grid.helpers';
 import { GRID_CONFIG } from '../../config/grid.config';
 import { PackageItemReadDto } from '../../dto/PackageItemReadDto';
+import { SettingsService } from '../../services/settings-service';
 
 @Component({
   selector: 'app-gridcell',
@@ -14,7 +15,6 @@ import { PackageItemReadDto } from '../../dto/PackageItemReadDto';
     '[class.is-road]': 'isRoad()',
     '[class.is-shelf]': 'isShelf()',
     '[class.has-package]': 'package() !== null',
-    '(click)': 'onCellClicked()'
   }
 })
 export class Gridcell {
@@ -23,9 +23,12 @@ export class Gridcell {
   isRoad = input(false);
   isShelf = input(false);
   package = input.required<PackageItemReadDto | null>();
+  // package popup of this cell is open (or the package is picked for an order)
+  highlighted = input(false);
   cellClick = output<PackageItemReadDto>();
 
   protected readonly Direction = Direction;
+  protected readonly showCoordinates = inject(SettingsService).showCoordinates;
 
   gridSize: Signal<number> = computed(() => GRID_CONFIG.gridCellSizePx);
 

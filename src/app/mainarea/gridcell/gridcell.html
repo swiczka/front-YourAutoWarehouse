@@ -1,2 +1,11 @@
- <p>{{coordinate().x}}, {{coordinate().y}}</p> <!-- temporary -->
- 
+@if (package(); as pkg) {
+    <button type="button" class="rack" [class.rack--highlighted]="highlighted()" (click)="onCellClicked()"
+        [attr.aria-label]="'Paczka ' + pkg.id + ', ' + pkg.name">
+        <span class="box" aria-hidden="true"></span>
+    </button>
+} @else if (isShelf()) {
+    <div class="rack rack--empty"></div>
+}
+@if (showCoordinates()) {
+    <span class="coords">{{coordinate().x}}, {{coordinate().y}}</span> <!-- temporary -->
+}

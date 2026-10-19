@@ -1,76 +1,31 @@
+// tile glued to the top-left corner of the map, 2 x 2 cells
 :host {
   position: absolute;
   left: calc(var(--grid-cell-size) * -2);
-  top: 0;
+  // -2px = the grid's border, so the tile lines up with the grid's outer edge
+  top: -2px;
+  width: calc(var(--grid-cell-size) * 2);
+  height: calc((var(--grid-cell-size) * 2) + 3px);
 
-  width: calc(var(--grid-cell-size) * 2 - 2px);
-  height: calc(var(--grid-cell-size) * 2 - 2px);
+  &.is-open {
+    z-index: 20;
+  }
+}
 
-  background-color: #84a5e7;
-  border: 2px solid #5e75a3;
+.zone {
   border-right: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: #333333;
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
-  box-sizing: border-box;
-  user-select: none;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-
-  &.has-packages {
-    background-color: #4d73c7;
-    border-color: #385799;
-    color: #ffffff;
-    cursor: pointer;
-  }
+  background: var(--yaw-accent);
 }
 
-.zone-title {
-  font-size: 14px;
+.badge {
+  left: -12px;
+  background: var(--yaw-ink);
+  color: var(--yaw-cream);
 }
 
-.package-count {
-  font-size: 12px;
-  opacity: 0.9;
-}
-
-.delivery-popup {
+.popup {
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 8px);
   left: 0;
-  z-index: 1000;
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  min-width: 280px;
-  font-weight: normal;
-  color: initial;
-  cursor: default;
-}
-
-.popup-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-  padding: 0 4px;
-
-  .popup-title-text {
-    font-weight: 600;
-    font-size: 13px;
-  }
-}
-
-svg {
-  fill: var(--mat-sys-primary);
-}
-
-table {
-  width: 100%;
+  width: 440px;
 }

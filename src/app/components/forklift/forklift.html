@@ -1,4 +1,5 @@
-<svg class="forklift" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-20.48 -20.48 552.96 552.96" xml:space="preserve">
+<button type="button" class="vehicle" (click)="toggle.emit()" [attr.aria-label]="label()" [attr.aria-expanded]="selected()">
+<svg class="forklift" [class.forklift--left]="facing() === 'left'" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-20.48 -20.48 552.96 552.96" xml:space="preserve" aria-hidden="true">
 <g id="SVGRepo_bgCarrier" stroke-width="0"/>
 <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
 <g id="SVGRepo_iconCarrier">
@@ -8,5 +9,32 @@
 		<path class="st0" d="M77.801,339.546c-28.333,0-51.305,22.971-51.305,51.297c0,28.333,22.972,51.305,51.305,51.305 c28.333,0,51.297-22.972,51.297-51.305C129.098,362.517,106.134,339.546,77.801,339.546z M77.801,408.444 c-9.723,0-17.602-7.879-17.602-17.602c0-9.708,7.879-17.586,17.602-17.586c9.723,0,17.586,7.879,17.586,17.586 C95.388,400.566,87.524,408.444,77.801,408.444z"/>
 		<path class="st0" d="M245.8,339.546c-28.333,0-51.304,22.971-51.304,51.297c0,28.333,22.971,51.305,51.304,51.305 c28.334,0,51.297-22.972,51.297-51.305C297.097,362.517,274.134,339.546,245.8,339.546z M245.8,408.444 c-9.723,0-17.602-7.879-17.602-17.602c0-9.708,7.879-17.586,17.602-17.586c9.724,0,17.586,7.879,17.586,17.586 C263.386,400.566,255.523,408.444,245.8,408.444z"/>
 	</g>
+	@if (carried()) {
+		<rect class="cargo" x="385" y="262" width="118" height="108"/>
+	}
 </g>
 </svg>
+<span class="badge yaw-num">{{ id() }}</span>
+</button>
+
+@if (selected()) {
+    <app-panel-popup class="popup" [title]="'WÓZEK #' + id()" (close)="toggle.emit()">
+        @if (carried(); as pkg) {
+            <table class="yaw-table">
+                <thead>
+                    <tr><th>Paczka</th><th>Nazwa</th><th>Zlecenie</th><th>Cel</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="yaw-num">{{ pkg.id }}</td>
+                        <td>{{ pkg.name }}</td>
+                        <td class="yaw-num">#{{ pkg.outboundOrderId ?? pkg.inboundOrderId }}</td>
+                        <td class="yaw-num">{{ destination() ?? '—' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        } @else {
+            <p class="empty">Jedzie bez ładunku.</p>
+        }
+    </app-panel-popup>
+}
