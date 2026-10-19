@@ -11,6 +11,7 @@ import { OrdersPanel } from '../components/orders-panel/orders-panel';
 import { LayoutStateService } from '../services/layout-state-service';
 import { HallHeader } from '../components/hall-header/hall-header';
 import { WarehouseMap } from '../components/warehouse-map/warehouse-map';
+import { EventFeed } from '../components/event-feed/event-feed';
 
 @Component({
   selector: 'app-mainarea',
@@ -21,7 +22,8 @@ import { WarehouseMap } from '../components/warehouse-map/warehouse-map';
     MatButtonModule,
     OrdersPanel,
     HallHeader,
-    WarehouseMap],
+    WarehouseMap,
+    EventFeed],
   templateUrl: './mainarea.html',
   styleUrl: './mainarea.scss',
 })

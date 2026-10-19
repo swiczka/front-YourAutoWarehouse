@@ -1,6 +1,7 @@
 import { computed, inject, Service, signal } from '@angular/core';
 import { Subscription, map } from 'rxjs';
 import { ToastService } from './toast-service';
+import { EventFeedService, FEED_TOPICS } from './event-feed-service';
 import { LayoutServiceApi } from '../api-services/layout-service-api';
 import { RxStompService } from '../stomp/rx-stomp.service';
 import { EditGridService } from './edit-grid-service';
@@ -24,6 +25,7 @@ export class LayoutStateService {
   private forkliftService = inject(ForkliftService);
   private packageService = inject(PackageItemService);
   private toast = inject(ToastService);
+  private eventFeed = inject(EventFeedService);
 
   private stompSubscriptions: Subscription[] = [];
 
@@ -106,6 +108,7 @@ export class LayoutStateService {
 
   startNewLayout(): void {
     this.clearStompSubscriptions();
+    this.eventFeed.clear();
     this.layoutId.set(null);
     this.layoutPresent.set(false);
     this.drawingModeEnabled.set(true);
@@ -169,6 +172,7 @@ export class LayoutStateService {
 
   private listenToLayout(layoutId: number): void {
     this.clearStompSubscriptions();
+    this.eventFeed.clear();
     this.initializeForkliftStompListening(layoutId);
     this.initializePackageStompListening(layoutId);
     this.initializePackageDroppedStompListening(layoutId);
@@ -212,6 +216,7 @@ export class LayoutStateService {
               .subscribe((event) => {
                 console.info(`Forklift ${event.forkliftId} is at (${event.x}, ${event.y}) at ${event.timestamp}`);
                 this.forkliftService.handleLocationEvent(event);
+                this.eventFeed.record(FEED_TOPICS.forkliftLocation, `Wózek #${event.forkliftId} → (${event.x}, ${event.y})`, event.timestamp);
               });
      this.stompSubscriptions.push(sub);
   }
@@ -225,12 +230,16 @@ export class LayoutStateService {
               if ('inboundOrderId' in event) {
                   console.info(`New package allocated: ${event.name} at (${event.currentX}, ${event.currentY})`);
                   this.packageService.handleAllocatedEvent(event);
+                  this.eventFeed.record(FEED_TOPICS.packageAllocated, `Paczka #${event.packageId} „${event.name}” → półka (${event.targetX}, ${event.targetY})`);
               } else if ('x' in event && 'y' in event) {
                   console.info(`Package ${event.packageId} moved to (${event.x}, ${event.y})`);
                   this.packageService.handleStoredEvent(event);
+                  this.eventFeed.record(FEED_TOPICS.packageStored, `Paczka #${event.packageId} odłożona na (${event.x}, ${event.y})`);
               } else {
                   console.info(`Package ${event.packageId} picked by forklift ${event.forkliftId}`);
                   this.packageService.handlePickedEvent(event);
+                  const task = event.taskType === 'OUTBOUND' ? 'wydanie' : 'dostawa';
+                  this.eventFeed.record(FEED_TOPICS.packagePicked, `Paczka #${event.packageId} · wózek #${event.forkliftId} · ${task}`);
               }
               });
      this.stompSubscriptions.push(sub);
@@ -244,6 +253,7 @@ export class LayoutStateService {
               .subscribe((event: PackageDroppedEvent) => {
                   console.info(`Package ${event.packageId} dropped at (${event.x}, ${event.y})`);
                   this.packageService.handleDroppedEvent(event);
+                  this.eventFeed.record(FEED_TOPICS.packageDropped, `Paczka #${event.packageId} w strefie wydań`);
               });
      this.stompSubscriptions.push(sub);
   }

@@ -1,0 +1,81 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 24px 24px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+  }
+}
+
+// 32 x 32: still a real button, does not stretch the heading
+.pause {
+  flex: 0 0 32px;
+  height: 32px;
+  padding: 0;
+  border: var(--yaw-rule);
+  background: transparent;
+  color: var(--yaw-ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &--paused {
+    background: var(--yaw-accent);
+  }
+}
+
+.waiting {
+  margin: 0;
+  font-size: 13px;
+  color: var(--yaw-muted);
+}
+
+// fixed height, scrolls inside
+.list {
+  margin: 0;
+  padding: 0 8px 0 0;
+  list-style: none;
+  max-height: 380px;
+  overflow-y: auto;
+  border-top: 1px solid var(--yaw-ink);
+  border-bottom: var(--yaw-rule);
+  font: 400 12px var(--yaw-font-num);
+}
+
+// time | topic on the first line, text under the topic
+.event {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 2px 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--yaw-line-soft);
+}
+
+.event__time {
+  color: var(--yaw-muted);
+}
+
+.event__topic {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event__text {
+  grid-column: 2;
+  font: 400 13px var(--yaw-font);
+}

@@ -1,0 +1,25 @@
+<div class="head">
+    <h2>ZDARZENIA KAFKA NA ŻYWO</h2>
+    <button type="button" class="pause" [class.pause--paused]="paused()" (click)="togglePause()"
+        [attr.aria-label]="paused() ? 'Wznów strumień zdarzeń' : 'Wstrzymaj strumień zdarzeń'">
+        @if (paused()) {
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4l14 8-14 8z"></path></svg>
+        } @else {
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="4" width="5" height="16"></rect><rect x="14" y="4" width="5" height="16"></rect></svg>
+        }
+    </button>
+</div>
+
+@if (events().length === 0) {
+    <p class="waiting">Czekam na zdarzenia z magazynu…</p>
+} @else {
+    <ol class="list yaw-scroll" tabindex="0" aria-label="Ostatnie zdarzenia">
+        @for (event of events(); track event.id) {
+            <li class="event">
+                <span class="event__time">{{ event.time }}</span>
+                <span class="event__topic">{{ event.topic }}</span>
+                <span class="event__text">{{ event.text }}</span>
+            </li>
+        }
+    </ol>
+}
