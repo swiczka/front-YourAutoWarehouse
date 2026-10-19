@@ -1,4 +1,4 @@
 export const GRID_CONFIG = {
-    editGridCellSizePx: 90,
+    editGridCellSizePx: 64,
     gridCellSizePx: 45
 }

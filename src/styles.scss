@@ -68,7 +68,7 @@ textarea {
 }
 
 :root {
-  --edit-grid-cell-size: 90px;
+  --edit-grid-cell-size: 64px; // keep in sync with GRID_CONFIG.editGridCellSizePx
   --grid-cell-size: 45px;
   --forklift-size: 45px;
 

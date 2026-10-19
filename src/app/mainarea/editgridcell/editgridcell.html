@@ -1,15 +1,12 @@
- <p>{{coordinate().x}}, {{coordinate().y}}</p> <!-- temporary -->
-
-@if(allowedBranchings().includes(Direction.UP)){
-    <button class="direction-button go-up" (click)="go(Direction.UP)">↑</button>
+@if (selected() && grownFrom() !== null) {
+    <span class="road-grow" [class.road-grow--x]="growAxis() === 'x'" [style.transform-origin]="growOrigin()"></span>
 }
-@if(allowedBranchings().includes(Direction.DOWN)){
-    <button class="direction-button go-down" (click)="go(Direction.DOWN)">↓</button>
+@if (extendFrom()) {
+    <button type="button" class="extend" (click)="extend()"
+        [attr.aria-label]="'Dodaj drogę na polu ' + coordinate().x + ', ' + coordinate().y">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" aria-hidden="true" [style.transform]="arrowRotation()"><path d="M12 20V5M5 11l7-7 7 7"></path></svg>
+    </button>
 }
-@if(allowedBranchings().includes(Direction.LEFT)){
-    <button class="direction-button go-left" (click)="go(Direction.LEFT)">←</button>
+@if (showCoordinates()) {
+    <span class="coords">{{coordinate().x}}, {{coordinate().y}}</span> <!-- temporary -->
 }
-@if(allowedBranchings().includes(Direction.RIGHT)){
-    <button class="direction-button go-right" (click)="go(Direction.RIGHT)">→</button>
-}
- 

@@ -1,0 +1,205 @@
+// side panel | drawing area; stacks on narrow screens
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.panel {
+  flex: 1 1 340px;
+  max-width: 420px;
+  min-width: 0;
+  box-sizing: border-box;
+  border-right: var(--yaw-rule);
+  display: flex;
+  flex-direction: column;
+
+  > div {
+    border-bottom: var(--yaw-rule);
+  }
+}
+
+.panel__intro {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  h1 {
+    margin: 0;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 36px;
+    letter-spacing: -1px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 21px;
+  }
+}
+
+.panel__size {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.size-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+// [-] [ 7 ] [+]
+.stepper {
+  display: flex;
+  border: var(--yaw-rule);
+
+  button {
+    width: var(--yaw-control-h);
+    height: var(--yaw-control-h);
+    border: none;
+    background: transparent;
+    color: var(--yaw-ink);
+    font: 700 20px var(--yaw-font);
+    cursor: pointer;
+
+    &:first-child {
+      border-right: var(--yaw-rule);
+    }
+
+    &:last-child {
+      border-left: var(--yaw-rule);
+    }
+
+    &:disabled {
+      color: #b9a585;
+      cursor: not-allowed;
+    }
+  }
+
+  span {
+    width: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--yaw-cream-2);
+    font-size: 18px;
+  }
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--yaw-muted);
+}
+
+.panel__stat {
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.stat__caption {
+  font-size: 10px;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+.stat__value {
+  font-size: 32px;
+  line-height: 32px;
+}
+
+.stat__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+// pushed to the bottom of the panel
+.panel .panel__actions {
+  margin-top: auto;
+  border-bottom: none;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.save {
+  height: 48px;
+  font-size: 14px;
+}
+
+.cancel {
+  align-self: center;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  color: var(--yaw-ink);
+  font: 600 13px var(--yaw-font);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+// room around the grid for the zone tiles (80px wide) hanging outside it
+.canvas {
+  flex: 999 1 640px;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 40px 104px; /* Większy padding żeby garaż nie ucięło przy małym ekranie */
+  overflow-x: auto;
+}
+
+.grid {
+  position: relative;
+  margin: 0 auto; /* Klasyczny sposób na środek bez psucia scrollowania! */
+  border: var(--yaw-rule);
+  background: var(--yaw-cream-2);
+}
+
+// zone tiles are one drawing cell high and glued to the grid's outer edge (-2px = grid border)
+.zone {
+  position: absolute;
+  width: 80px;
+  height: calc(var(--edit-grid-cell-size) + 2px);
+  box-sizing: border-box;
+  border: var(--yaw-rule);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font: 800 10px var(--yaw-font);
+  letter-spacing: 0.5px;
+
+  &--delivery {
+    left: -82px;
+    top: -2px;
+    border-right: none;
+    background: var(--yaw-accent);
+  }
+
+  &--sending {
+    right: -82px;
+    top: -2px;
+    border-left: none;
+    background: var(--yaw-ink);
+    color: var(--yaw-cream);
+  }
+
+  &--garage {
+    left: -82px;
+    bottom: -2px;
+    border-right: none; /* Żeby łączyło się ładnie z siatką bez podwójnej ramki */
+    background: var(--yaw-cream-2);
+  }
+}

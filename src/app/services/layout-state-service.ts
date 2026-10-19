@@ -46,6 +46,9 @@ export class LayoutStateService {
   readonly drawingModeEnabled = signal(true);
   readonly layoutPresent = signal(false);
 
+  // layout that was open before "+ NOWY UKŁAD" - the editor's cancel link goes back to it
+  readonly previousLayoutId = signal<number | null>(null);
+
   init(): void {
     this.loadUserLayouts();
 
@@ -106,7 +109,17 @@ export class LayoutStateService {
     });
   }
 
+  cancelNewLayout(): void {
+    const previousId = this.previousLayoutId();
+    if (previousId !== null) {
+      this.selectLayout(previousId);
+    }
+  }
+
   startNewLayout(): void {
+    if (this.layoutId() !== null) {
+      this.previousLayoutId.set(this.layoutId());
+    }
     this.clearStompSubscriptions();
     this.eventFeed.clear();
     this.layoutId.set(null);

@@ -1,47 +1,5 @@
 @if (drawingModeEnabled()) {
-<!-- layout editor (restyled in a later phase) -->
-<div class="editor">
-    <div class="controls">
-        <div class="controls-group">
-            <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                <mat-label>Szerokość (X)</mat-label>
-                <input matInput type="number" [disabled]="!editModeEnabled()" [value]="sizeX()" (input)="sizeX.set(getCorrectSize(xInput.valueAsNumber || this.minSize))" #xInput>
-            </mat-form-field>
-            <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                <mat-label>Wysokość (Y)</mat-label>
-                <input matInput type="number" [disabled]="!editModeEnabled()" [value]="sizeY()" (input)="sizeY.set(getCorrectSize(yInput.valueAsNumber || this.minSize))" #yInput>
-            </mat-form-field>
-            <button matButton="filled" (click)="editModeToggle()">
-                {{editModeEnabled() ? 'Zatwierdź' : 'Odblokuj zmianę rozmiaru'}}
-            </button>
-        </div>
-    </div>
-
-    <div class="warehouse-container">
-        <div class="warehouse-grid"
-            [style.width.px]="gridWidthPx()"
-            [style.height.px]="gridHeightPx()">
-
-            <!-- Renderujemy wszystkie komórki za pomocą pętli @for -->
-            @for (cell of drawingCells(); track cell.coordinate.x + '-' + cell.coordinate.y) {
-            <app-editgridcell
-                [coordinate]="cell.coordinate"
-                [allowedBranchings]="cell.allowedBranchings"
-                [selected]="cell.selected"
-                (expandRequest)="handleGridExpansion($event)">
-            </app-editgridcell>
-            }
-
-            <!-- Garaż wózków widłowych (Forklift Garage) -->
-            <div class="forklift-garage">
-                Garaż
-            </div>
-        </div>
-        <div class="confirm-button">
-                <button matButton="filled" (click)="confirmLayout()">Zatwierdź siatkę</button>
-        </div>
-    </div>
-</div>
+<app-layout-editor />
 } @else {
 <div class="control-room">
     <section class="hall" aria-label="Hala magazynu">

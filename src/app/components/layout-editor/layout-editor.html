@@ -1,0 +1,72 @@
+<aside class="panel">
+    <div class="panel__intro">
+        <h1>NOWY UKŁAD</h1>
+        <p>Zaczynasz w polu przy garażu. Klikaj pola z przerywaną ramką, żeby przedłużać drogę. Drogi nie mogą biec tuż obok siebie, między nimi zawsze zostaje miejsce na regały.</p>
+    </div>
+
+    <div class="panel__size">
+        <div class="size-row">
+            <span id="size-x-label" class="yaw-label">Szerokość (X)</span>
+            <div class="stepper" role="group" aria-labelledby="size-x-label">
+                <button type="button" (click)="resize(-1, 0)" [disabled]="sizeX() <= minSize" aria-label="Zmniejsz szerokość">−</button>
+                <span class="yaw-num">{{ sizeX() }}</span>
+                <button type="button" (click)="resize(1, 0)" [disabled]="sizeX() >= maxSize" aria-label="Zwiększ szerokość">+</button>
+            </div>
+        </div>
+        <div class="size-row">
+            <span id="size-y-label" class="yaw-label">Wysokość (Y)</span>
+            <div class="stepper" role="group" aria-labelledby="size-y-label">
+                <button type="button" (click)="resize(0, -1)" [disabled]="sizeY() <= minSize" aria-label="Zmniejsz wysokość">−</button>
+                <span class="yaw-num">{{ sizeY() }}</span>
+                <button type="button" (click)="resize(0, 1)" [disabled]="sizeY() >= maxSize" aria-label="Zwiększ wysokość">+</button>
+            </div>
+        </div>
+        <span class="hint">Od <b class="yaw-num">{{ minSize }}</b> do <b class="yaw-num">{{ maxSize }}</b> pól w każdym kierunku.</span>
+    </div>
+
+    <div class="panel__stat" aria-live="polite">
+        <span class="stat__caption">Aktualnie będzie dostępnych</span>
+        <span class="stat__value yaw-num">{{ shelfCount() }}</span>
+        <span class="stat__label">Miejsc na regałach</span>
+    </div>
+
+    <div class="panel__actions">
+        <button type="button" class="yaw-btn yaw-btn--outline" (click)="clearRoads()">WYCZYŚĆ DROGI</button>
+        <button type="button" class="yaw-btn save" (click)="save()">
+            ZATWIERDŹ NOWY UKŁAD
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </button>
+        @if (canCancel()) {
+            <button type="button" class="cancel" (click)="cancel()">Anuluj i wróć do poprzedniego układu</button>
+        }
+    </div>
+</aside>
+
+<section class="canvas" aria-label="Siatka układu">
+    <div class="grid" [style.width.px]="gridWidthPx()" [style.height.px]="gridHeightPx()">
+        <!-- Renderujemy wszystkie komórki za pomocą pętli @for -->
+        @for (cell of cells(); track cell.coordinate.x + '-' + cell.coordinate.y) {
+            <app-editgridcell
+                [coordinate]="cell.coordinate"
+                [selected]="cell.selected"
+                [extendFrom]="cell.extendFrom"
+                [grownFrom]="cell.grownFrom"
+                (expandRequest)="extend($event)">
+            </app-editgridcell>
+        }
+
+        <div class="zone zone--delivery">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 7h11v9H3z"></path><path d="M14 10h4l3 3v3h-7"></path><circle cx="7" cy="18" r="1.8"></circle><circle cx="17" cy="18" r="1.8"></circle></svg>
+            DOSTAWY
+        </div>
+        <div class="zone zone--sending">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M10 7h11v9H10z"></path><path d="M10 10H6l-3 3v3h7"></path><circle cx="7" cy="18" r="1.8"></circle><circle cx="17" cy="18" r="1.8"></circle></svg>
+            WYDANIA
+        </div>
+        <!-- Garaż wózków widłowych (Forklift Garage) -->
+        <div class="zone zone--garage">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 20V9l9-5 9 5v11"></path><path d="M7 20v-6h10v6"></path><path d="M7 17h10"></path></svg>
+            GARAŻ
+        </div>
+    </div>
+</section>

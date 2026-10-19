@@ -2,58 +2,66 @@
     position: absolute;
     width: var(--edit-grid-cell-size);
     height: var(--edit-grid-cell-size);
-    
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
+    background: var(--yaw-cream-2);
+    box-shadow: inset 0 0 0 0.5px #e3c796;
 
     &.is-selected {
-        background-color: rgb(187, 187, 187);
+        background: var(--yaw-road);
+        box-shadow: inset 0 0 0 1px var(--yaw-road-edge);
     }
 }
 
-.direction-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    width: 20px;
-    height: 20px;
+// whole free cell is the button (big target), dashed frame + arrow pointing away from the road
+.extend {
+    position: absolute;
+    inset: 6px;
     padding: 0;
-    
-    line-height: 1;
-    
-    background-color: #997d5fac;
-    color: white;
-    border: none;
-    border-radius: 2px;
+    border: 2px dashed var(--yaw-ink);
+    border-radius: 0;
+    background: rgba(194, 187, 174, 0.35);
+    color: var(--yaw-ink);
     cursor: pointer;
-    z-index: 100;
-    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover {
-        background-color: #695744;
+        background: rgba(194, 187, 174, 0.7);
     }
 }
 
-.go-up{
+// freshly drawn road "pours" out of the road it extends (ease-out, 280 ms)
+.road-grow {
     position: absolute;
-    top: -10px;
+    inset: 0;
+    background: var(--yaw-road);
+    box-shadow: inset 0 0 0 1px var(--yaw-road-edge);
+    animation: grow-y 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+
+    &--x {
+        animation-name: grow-x;
+    }
 }
 
-.go-down{
-    position: absolute;
-    bottom: -10px;
+@keyframes grow-x {
+    from {
+        transform: scaleX(0);
+    }
 }
 
-.go-left{
-    position: absolute;
-    left: -10px;
+@keyframes grow-y {
+    from {
+        transform: scaleY(0);
+    }
 }
 
-.go-right{
+// debug overlay (settings: coordinates)
+.coords {
     position: absolute;
-    right: -10px;
+    left: 3px;
+    bottom: 2px;
+    font: 500 10px var(--yaw-font-num);
+    color: var(--yaw-muted);
+    pointer-events: none;
 }
