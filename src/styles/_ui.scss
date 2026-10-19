@@ -1,0 +1,140 @@
+// Shared UI classes of the redesign. They live globally (not in component styles)
+// so every component can reuse them and component style budgets stay small.
+
+// keyboard focus ring - visible only when navigating with the keyboard
+:focus-visible {
+  outline: 3px solid var(--yaw-accent);
+  outline-offset: 2px;
+}
+
+// inside scrolling boxes an outer ring would be clipped, so it is drawn inwards
+.yaw-scroll :focus-visible {
+  outline-offset: -3px;
+}
+
+// numbers (ids, counters, coordinates)
+.yaw-num {
+  font-family: var(--yaw-font-num);
+  font-weight: 700;
+}
+
+// small uppercase label above a field or a section
+.yaw-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.yaw-btn {
+  height: var(--yaw-control-h);
+  padding: 0 20px;
+  border: var(--yaw-rule);
+  border-radius: 0;
+  background: var(--yaw-ink);
+  color: var(--yaw-cream);
+  font: 700 13px var(--yaw-font);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  &--outline {
+    background: transparent;
+    color: var(--yaw-ink);
+  }
+
+  &--accent {
+    background: var(--yaw-accent);
+    color: var(--yaw-ink);
+  }
+
+  &:disabled {
+    background: #e3cda6;
+    border-color: #e3cda6;
+    color: var(--yaw-muted);
+    cursor: not-allowed;
+  }
+}
+
+.yaw-input {
+  height: var(--yaw-control-h);
+  box-sizing: border-box;
+  padding: 0 12px;
+  border: var(--yaw-rule);
+  border-radius: 0;
+  background: var(--yaw-cream-2);
+  color: var(--yaw-ink);
+  font: 400 15px var(--yaw-font);
+}
+
+.yaw-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  td {
+    padding: 8px 12px;
+    border-top: 1px solid var(--yaw-line-soft);
+  }
+
+  // dark header row variant
+  &--dark thead tr {
+    background: var(--yaw-ink);
+    color: var(--yaw-cream);
+  }
+}
+
+// status badge; the variant comes from status.helpers.ts
+.yaw-chip {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+
+  &--dark {
+    background: var(--yaw-ink);
+    color: var(--yaw-cream);
+  }
+
+  &--tan {
+    background: var(--yaw-tan);
+    color: var(--yaw-ink);
+  }
+
+  &--outline {
+    box-shadow: inset 0 0 0 1.5px var(--yaw-ink);
+    color: var(--yaw-ink);
+  }
+}
+
+// floating panel (popups on the map)
+.yaw-popup {
+  background: var(--yaw-cream);
+  border: var(--yaw-rule);
+  box-shadow: var(--yaw-shadow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

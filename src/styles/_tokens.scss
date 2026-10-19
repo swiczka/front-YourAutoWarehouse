@@ -1,0 +1,24 @@
+// Design tokens of the "Sterownia" redesign.
+// Every component reads colors, fonts and borders from these CSS variables,
+// so a palette change happens in one place only.
+:root {
+  --yaw-cream: #f8e5c3;
+  --yaw-cream-2: #fbefd9;
+  --yaw-ink: #111111;
+  --yaw-accent: #e0582a;
+  --yaw-road: #c2bbae;
+  --yaw-road-edge: #a79f91;
+  --yaw-tan: #e8cc9c;
+  --yaw-tan-strong: #f2d2a0;
+  --yaw-line-soft: #c9ae80;
+  --yaw-muted: #5e4b32;
+  --yaw-error: #b3261e;
+
+  --yaw-rule: 2px solid var(--yaw-ink);
+  --yaw-shadow: 6px 6px 0 var(--yaw-ink);
+
+  --yaw-font: 'Rubik', sans-serif;
+  --yaw-font-num: 'IBM Plex Mono', monospace;
+
+  --yaw-control-h: 44px;
+}
