@@ -102,9 +102,11 @@
             <app-sending-zone [packages]="this.droppedPackages()"></app-sending-zone>
             
         </div>
+        @if(drawingModeEnabled()){
         <div class="confirm-button">
                 <button matButton="filled" (click)="confirmLayout()">Zatwierdź siatkę</button>
         </div>
+        }
         
     </div>
     @if(!this.drawingModeEnabled()){
