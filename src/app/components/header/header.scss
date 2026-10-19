@@ -1,4 +1,121 @@
-mat-toolbar {
-  background-color: var(--mat-sys-primary);
-  color: var(--mat-sys-on-primary);
+// whole bar: brand | status (takes the free space) | layout picker
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  border-bottom: var(--yaw-rule);
+}
+
+.header__brand {
+  flex: 0 0 220px;
+  box-sizing: border-box;
+  padding: 16px 24px;
+  border-right: var(--yaw-rule);
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  border: 3px solid var(--yaw-ink);
+  padding: 6px 10px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.logo__mark {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 30px;
+  letter-spacing: -1px;
+}
+
+.logo__name {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border-top: var(--yaw-rule);
+  padding-top: 3px;
+}
+
+// grows to fill the gap between brand and picker, text centered in it
+.header__status {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+}
+
+.offline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--yaw-error);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  animation: blink 1.2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+// select on top, "new layout" button below; both share one width
+.layout-picker {
+  flex: 0 1 300px;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  border-left: var(--yaw-rule);
+}
+
+.layout-picker__select {
+  flex: 1 1 0;
+  min-height: var(--yaw-control-h);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 20px;
+  background: var(--yaw-cream-2);
+
+  select {
+    flex: 1 1 auto;
+    min-width: 0;
+    align-self: stretch;
+    padding: 0 16px 0 4px;
+    border: none;
+    background: transparent;
+    color: var(--yaw-ink);
+    font: 500 14px var(--yaw-font);
+    cursor: pointer;
+  }
+}
+
+.layout-picker__new,
+.layout-picker__mode {
+  flex: 1 1 0;
+  min-height: var(--yaw-control-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-top: var(--yaw-rule);
+  font: 700 14px var(--yaw-font);
+  letter-spacing: 0.5px;
+}
+
+.layout-picker__new {
+  background: var(--yaw-accent);
+  color: var(--yaw-ink);
+  cursor: pointer;
+}
+
+.layout-picker__mode {
+  background: var(--yaw-ink);
+  color: var(--yaw-cream);
 }

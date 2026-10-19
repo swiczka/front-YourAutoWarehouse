@@ -71,35 +71,6 @@
     }
 }
 
-.warehouse-selector {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-
-    .selector-controls {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        flex-wrap: wrap;
-
-        mat-form-field {
-            min-width: 280px;
-        }
-    }
-
-    .current-layout-info {
-        font-size: 14px;
-        color: rgba(0, 0, 0, 0.7);
-
-        strong {
-            color: var(--mat-sys-primary, #1976d2);
-        }
-    }
-}
-
 .warehouse-container {
     padding: 50px; /* Większy padding żeby garaż nie ucięło przy małym ekranie */
     background-color: var(--mat-sys-on-primary);

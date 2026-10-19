@@ -1,5 +1,36 @@
-<header>
-    <mat-toolbar>
-        <span>Your Auto Warehouse</span>
-    </mat-toolbar>
+<header class="header">
+    <div class="header__brand">
+        <div class="logo">
+            <span class="logo__mark">YAW</span>
+            <span class="logo__name">YOUR AUTO WAREHOUSE</span>
+        </div>
+    </div>
+
+    <div class="header__status" role="status" aria-live="polite">
+        @if (!online()) {
+            <span class="offline">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" aria-hidden="true"><path d="M2 8.5a15 15 0 0 1 20 0"></path><path d="M5.5 12a10 10 0 0 1 13 0"></path><path d="M9 15.5a5 5 0 0 1 6 0"></path><path d="M3 3l18 18"></path></svg>
+                BRAK POŁĄCZENIA Z SERWEREM
+            </span>
+        }
+    </div>
+
+    <div class="layout-picker">
+        <div class="layout-picker__select">
+            <label for="layout-select" class="yaw-label">Układ</label>
+            <select id="layout-select" #layoutSelect (change)="onLayoutChange(layoutSelect.value)">
+                @if (drawingModeEnabled()) {
+                    <option value="new" selected>Nowy układ (szkic)</option>
+                }
+                @for (layout of layouts(); track layout.id) {
+                    <option [value]="layout.id" [selected]="layout.id === layoutId()">{{ layout.label }}</option>
+                }
+            </select>
+        </div>
+        @if (drawingModeEnabled()) {
+            <div class="layout-picker__mode">TWORZYSZ NOWY UKŁAD</div>
+        } @else {
+            <button type="button" class="layout-picker__new" (click)="startNewLayout()">+ NOWY UKŁAD</button>
+        }
+    </div>
 </header>

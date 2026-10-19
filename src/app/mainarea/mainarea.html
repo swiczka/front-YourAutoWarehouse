@@ -32,26 +32,7 @@
 
 <div class="warehouse-orders">
     <div class="warehouse-container">
-        <div class="warehouse-selector">
-            <div class="selector-controls">
-                <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                    <mat-label>Wybierz układ magazynu</mat-label>
-                    <mat-select [value]="selectedLayoutDraft()" (valueChange)="selectedLayoutDraft.set($event)">
-                        <mat-option value="new">+ Dodaj nowy</mat-option>
-                        @for (layout of formattedLayouts(); track layout.id) {
-                            <mat-option [value]="layout.id">{{ layout.label }}</mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
-                <button matButton="filled" (click)="applySelectedLayout()" [disabled]="selectedLayoutDraft() === null">
-                    Zastosuj
-                </button>
-            </div>
-            <div class="current-layout-info">
-                Aktualny wybrany układ: <strong>{{ layoutId() === null ? "Nowy (tryb tworzenia)" : layoutId() }}</strong>
-            </div>
-        </div>
-        <div class="warehouse-grid" 
+        <div class="warehouse-grid"
             [style.width.px]="gridWidthPx()" 
             [style.height.px]="gridHeightPx()">
             
