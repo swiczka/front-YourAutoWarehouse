@@ -1,0 +1,109 @@
+// fixed strip at the bottom of the screen; clicks pass through the empty part
+.region {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 24px;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+  pointer-events: none;
+}
+
+.toast {
+  --toast-accent: var(--yaw-accent);
+
+  pointer-events: auto;
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  align-items: stretch;
+  background: var(--yaw-ink);
+  color: var(--yaw-cream);
+  border: var(--yaw-rule);
+  box-shadow: 6px 6px 0 var(--toast-accent);
+  // enter: ease-out (fast start, soft landing)
+  animation: toast-in 450ms cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  &--error {
+    --toast-accent: var(--yaw-error);
+
+    .toast__icon {
+      color: var(--yaw-cream);
+    }
+  }
+
+  // leave: ease-in (soft start, fast exit)
+  &--leaving {
+    animation: toast-out 300ms cubic-bezier(0.55, 0, 1, 0.45) both;
+  }
+}
+
+.toast__icon {
+  flex: 0 0 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--toast-accent);
+  color: var(--yaw-ink);
+}
+
+.toast__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 12px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.toast__title {
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.toast__close {
+  flex: 0 0 48px;
+  border: none;
+  border-left: 2px solid #3a3a3a;
+  background: transparent;
+  color: var(--yaw-cream);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// shrinking bar = time left before the toast hides itself (5 s)
+.toast__timer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--toast-accent);
+  transform-origin: left;
+  animation: toast-timer 5s linear both;
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateY(calc(100% + 40px));
+  }
+}
+
+@keyframes toast-out {
+  to {
+    transform: translateY(calc(100% + 40px));
+  }
+}
+
+@keyframes toast-timer {
+  to {
+    transform: scaleX(0);
+  }
+}

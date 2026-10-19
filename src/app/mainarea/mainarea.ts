@@ -7,8 +7,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {FormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
-import { OrderPanel } from '../components/order-panel/order-panel';
-import { OrdersView } from '../components/orders-view/orders-view';
+import { OrdersPanel } from '../components/orders-panel/orders-panel';
 import { LayoutStateService } from '../services/layout-state-service';
 import { HallHeader } from '../components/hall-header/hall-header';
 import { WarehouseMap } from '../components/warehouse-map/warehouse-map';
@@ -20,8 +19,7 @@ import { WarehouseMap } from '../components/warehouse-map/warehouse-map';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    OrderPanel,
-    OrdersView,
+    OrdersPanel,
     HallHeader,
     WarehouseMap],
   templateUrl: './mainarea.html',
@@ -54,8 +52,6 @@ export class Mainarea implements OnInit, OnDestroy{
   gridHeightPx = computed(() => this.sizeY() * GRID_CONFIG.editGridCellSizePx);
 
   drawingCells = computed(() => this.editGridService.cells());
-
-  orderPanelMode = signal<"new" | "inbound" | "outbound">("inbound");
 
   ngOnInit(): void {
     this.layoutState.init();

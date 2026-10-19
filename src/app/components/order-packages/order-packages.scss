@@ -1,17 +1,26 @@
 .packages-section {
-  margin-top: 20px;
-  border-top: 1px solid rgba(0, 0, 0, 0.12);
-  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 
   h3 {
-    margin: 0 0 12px 0;
-    font-size: 15px;
-    font-weight: 600;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
   }
 }
 
 .packages-table {
   overflow: auto;
-  border-radius: 10px;
   max-height: 300px;
+  border: var(--yaw-rule);
+
+  th {
+    border-bottom: var(--yaw-rule);
+  }
+}
+
+.nowrap {
+  white-space: nowrap;
 }

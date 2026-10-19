@@ -1,6 +1,6 @@
 import { computed, inject, Service, signal } from '@angular/core';
 import { Subscription, map } from 'rxjs';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastService } from './toast-service';
 import { LayoutServiceApi } from '../api-services/layout-service-api';
 import { RxStompService } from '../stomp/rx-stomp.service';
 import { EditGridService } from './edit-grid-service';
@@ -23,7 +23,7 @@ export class LayoutStateService {
   private gridService = inject(GridService);
   private forkliftService = inject(ForkliftService);
   private packageService = inject(PackageItemService);
-  private snackBar = inject(MatSnackBar);
+  private toast = inject(ToastService);
 
   private stompSubscriptions: Subscription[] = [];
 
@@ -92,14 +92,14 @@ export class LayoutStateService {
           this.packageService.carriedByForklift.set(new Map());
 
           this.showLayout(layoutDto);
-          this.openSnackBar(`Załadowano układ ID: ${layoutDto.id}`);
+          this.toast.success('UKŁAD ZAŁADOWANY', `Układ #${layoutDto.id} jest otwarty.`);
         } else {
-          this.openSnackBar(`Układ ID: ${id} nie zawiera danych siatki.`);
+          this.toast.error('PUSTY UKŁAD', `Układ #${id} nie zawiera danych siatki.`);
         }
       },
       error: (err: unknown) => {
         console.error('Błąd podczas pobierania układu:', err);
-        this.openSnackBar(`Nie udało się pobrać układu ID: ${id}`);
+        this.toast.error('NIE UDAŁO SIĘ WCZYTAĆ UKŁADU', `Nie udało się pobrać układu #${id}.`);
       }
     });
   }
@@ -138,11 +138,13 @@ export class LayoutStateService {
         if (newId !== null) {
           this.loadUserLayouts();
           this.listenToLayout(newId);
+          this.toast.success('UKŁAD ZAPISANY', `Nowy układ #${newId} jest gotowy do pracy.`);
         }
       },
       error: (err) => {
         console.error('Server saving error!', err);
         this.drawingModeEnabled.set(true);
+        this.toast.error('NIE UDAŁO SIĘ ZAPISAĆ UKŁADU', 'Serwer nie odpowiada. Spróbuj ponownie za chwilę.');
       }
     });
   }
@@ -244,9 +246,5 @@ export class LayoutStateService {
                   this.packageService.handleDroppedEvent(event);
               });
      this.stompSubscriptions.push(sub);
-  }
-
-  private openSnackBar(message: string) {
-    this.snackBar.open(message, "Zamknij");
   }
 }

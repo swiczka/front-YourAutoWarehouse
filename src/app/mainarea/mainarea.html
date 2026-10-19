@@ -65,20 +65,9 @@
     </section>
 
     <aside class="side" aria-label="Zlecenia">
-        <div class="tabs" role="group" aria-label="Widok zleceń">
-            <button type="button" class="tabs__tab" [class.is-active]="orderPanelMode() === 'inbound'" [attr.aria-pressed]="orderPanelMode() === 'inbound'" (click)="orderPanelMode.set('inbound')">DOSTAWY</button>
-            <button type="button" class="tabs__tab" [class.is-active]="orderPanelMode() === 'outbound'" [attr.aria-pressed]="orderPanelMode() === 'outbound'" (click)="orderPanelMode.set('outbound')">WYDANIA</button>
-            <button type="button" class="tabs__tab" [class.is-active]="orderPanelMode() === 'new'" [attr.aria-pressed]="orderPanelMode() === 'new'" (click)="orderPanelMode.set('new')">+ NOWE ZLECENIE</button>
-        </div>
-        <div class="side__content">
-            @if (layoutId(); as currentId) {
-                @switch (orderPanelMode()) {
-                    @case ('inbound') { <app-orders-view [layoutId]="currentId" orderType="inbound" /> }
-                    @case ('outbound') { <app-orders-view [layoutId]="currentId" orderType="outbound" /> }
-                    @case ('new') { <app-order-panel [layoutId]="currentId" /> }
-                }
-            }
-        </div>
+        @if (layoutId(); as currentId) {
+            <app-orders-panel [layoutId]="currentId" />
+        }
     </aside>
 </div>
 }

@@ -7,7 +7,7 @@
             [isRoad]="cell.isRoad"
             [isShelf]="cell.isShelf"
             [package]="packageItem"
-            [highlighted]="packageItem !== null && packageItem.id === selectedPackageId()"
+            [highlighted]="packageItem !== null && (packageItem.id === selectedPackageId() || highlightedPackageIds().has(packageItem.id))"
             (cellClick)="toggle({ kind: 'package', package: $event })">
         </app-gridcell>
     }

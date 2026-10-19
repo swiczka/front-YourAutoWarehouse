@@ -13,6 +13,7 @@ describe('OrderPanel', () => {
 
     fixture = TestBed.createComponent(OrderPanel);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('layoutId', 1);
     await fixture.whenStable();
   });
 

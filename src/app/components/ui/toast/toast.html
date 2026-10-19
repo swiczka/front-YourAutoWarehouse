@@ -1,0 +1,23 @@
+<div class="region" role="status" aria-live="polite">
+    @if (this.toast(); as toast) {
+        @for (current of [toast]; track current.id) {
+            <div class="toast" [class.toast--error]="current.kind === 'error'" [class.toast--leaving]="leaving()">
+                <div class="toast__icon" aria-hidden="true">
+                    @if (current.kind === 'success') {
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"><path d="M5 12l5 5 9-10"></path></svg>
+                    } @else {
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"><path d="M12 5v9M12 18v1"></path></svg>
+                    }
+                </div>
+                <div class="toast__text">
+                    <span class="toast__title">{{ current.title }}</span>
+                    <span>{{ current.text }}</span>
+                </div>
+                <button type="button" class="toast__close" (click)="close()" aria-label="Zamknij powiadomienie">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                </button>
+                <span class="toast__timer" aria-hidden="true"></span>
+            </div>
+        }
+    }
+</div>

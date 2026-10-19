@@ -1,16 +1,56 @@
-.order-table {
-    overflow: auto;
-    border-radius: 10px;
-    max-height: 400px;
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
-.mat-mdc-row .mat-mdc-cell {
-  border-bottom: 1px solid transparent;
-  border-top: 1px solid transparent;
+
+.order-table {
+  overflow: auto;
+  max-height: 268px;
+  border: var(--yaw-rule);
+
+  td {
+    border-top-color: var(--yaw-ink);
+  }
+}
+
+.row-is-clicked {
+  background: var(--yaw-tan-strong);
+}
+
+.id-cell {
+  padding: 2px 6px;
+}
+
+// the order id doubles as the "show packages" button
+.order-link {
+  height: 34px;
+  padding: 0 6px;
+  border: none;
+  background: transparent;
+  color: var(--yaw-ink);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: underline;
   cursor: pointer;
 }
-.row-is-clicked {
-  font-weight: bold;
+
+.nowrap {
+  white-space: nowrap;
 }
-.mat-mdc-row:hover .mat-mdc-cell {
-  border-color: currentColor;
+
+.empty {
+  border: 2px dashed var(--yaw-ink);
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.empty__title {
+  font-size: 16px;
+  font-weight: 800;
 }

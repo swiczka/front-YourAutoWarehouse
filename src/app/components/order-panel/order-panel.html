@@ -1,52 +1,39 @@
 <div class="order-card">
-  <h3 class="order-title">Nowe zlecenie</h3>
-
   <!-- Wybór typu: Dostawa / Wydanie -->
-  <div class="operation-type">
-    <span class="type-label">Typ operacji:</span>
-    <mat-button-toggle-group 
-      hideSingleSelectionIndicator 
-      name="orderType" 
-      [value]="orderType()"
-      (change)="orderType.set($event.value)"
-      aria-label="Typ zlecenia">
-      <mat-button-toggle value="Inbound">Dostawa</mat-button-toggle>
-      <mat-button-toggle value="Outbound">Wydanie</mat-button-toggle>
-    </mat-button-toggle-group>
+  <div class="operation-type" role="group" aria-label="Typ zlecenia">
+    <button type="button" [class.is-active]="orderType() === 'Inbound'" [attr.aria-pressed]="orderType() === 'Inbound'" (click)="orderType.set('Inbound')">DOSTAWA</button>
+    <button type="button" [class.is-active]="orderType() === 'Outbound'" [attr.aria-pressed]="orderType() === 'Outbound'" (click)="orderType.set('Outbound')">WYDANIE</button>
   </div>
 
   <!-- FORMULARZ DOSTAWY (INBOUND) -->
   @if (orderType() === 'Inbound') {
     <form [formGroup]="inboundForm" (ngSubmit)="submitInbound()" class="order-form">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>ID firmy</mat-label>
-        <input matInput placeholder="np. 67" formControlName="companyId">
-      </mat-form-field>
+      <div class="field">
+        <label for="inbound-company" class="yaw-label">ID firmy</label>
+        <input id="inbound-company" class="yaw-input" placeholder="np. 67" formControlName="companyId">
+      </div>
 
       <!-- Sekcja dynamicznych paczek -->
       <div class="packages-section" formArrayName="packageNames">
         <div class="packages-header">
-          <span class="packages-title">Paczki ({{ inboundPackages.length }}):</span>
-          <button matButton="outlined" type="button" (click)="addInboundPackage()">
-            + Dodaj paczkę
-          </button>
+          <span class="yaw-label">PACZKI (<span class="yaw-num">{{ inboundPackages.length }}</span>)</span>
+          <button type="button" class="yaw-btn yaw-btn--outline small-btn" (click)="addInboundPackage()">+ Dodaj paczkę</button>
         </div>
 
         @for (packageControl of inboundPackages.controls; track $index; let i = $index) {
           <div class="package-row">
-            <mat-form-field appearance="outline" subscriptSizing="dynamic">
-              <mat-label>Paczka {{ i + 1 }}</mat-label>
-              <input matInput placeholder="np. Opony 205/55" [formControlName]="i">
-            </mat-form-field>
-            <button matButton="outlined" type="button" class="remove-btn" (click)="removeInboundPackage(i)" title="Usuń paczkę">
-              ✕
+            <label class="yaw-num" [for]="'package-' + i">{{ i + 1 }}</label>
+            <input class="yaw-input" [id]="'package-' + i" placeholder="np. Opony 205/55" [formControlName]="i">
+            <button type="button" class="yaw-btn yaw-btn--outline remove-btn" (click)="removeInboundPackage(i)" [attr.aria-label]="'Usuń paczkę ' + (i + 1)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
             </button>
           </div>
         }
       </div>
 
-      <button matButton="filled" type="submit" class="submit-btn" [disabled]="!inboundForm.valid">
-        Przyjmij dostawę
+      <button type="submit" class="yaw-btn submit-btn" [disabled]="!inboundForm.valid">
+        PRZYJMIJ DOSTAWĘ
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
       </button>
     </form>
   }
@@ -54,76 +41,61 @@
   <!-- FORMULARZ WYDANIA (OUTBOUND) -->
   @if (orderType() === 'Outbound') {
     <form [formGroup]="outboundForm" (ngSubmit)="submitOutbound()" class="order-form">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>ID firmy</mat-label>
-        <input matInput placeholder="np. 67" formControlName="companyId">
-      </mat-form-field>
+      <div class="field">
+        <label for="outbound-company" class="yaw-label">ID firmy</label>
+        <input id="outbound-company" class="yaw-input" placeholder="np. 67" formControlName="companyId">
+      </div>
 
       <div class="stored-packages-section">
         <div class="packages-header">
-          <span class="packages-title">
-            Wybierz paczki ({{ selection.selected.length }}):
-          </span>
+          <span class="yaw-label">Paczki na półkach</span>
+          <span class="counter">Zaznaczono <span class="yaw-num">{{ selectedCount() }}</span> z <span class="yaw-num">{{ storedPackages().length }}</span></span>
         </div>
 
         @if (storedPackages().length === 0) {
           <p class="no-packages-msg">Brak paczek w magazynie gotowych do wydania.</p>
         } @else {
-          <div class="table-container">
-            <table mat-table [dataSource]="storedPackages()" class="mat-elevation-z1">
-              <!-- Select Checkbox Column -->
-              <ng-container matColumnDef="select">
-                <th mat-header-cell *matHeaderCellDef>
-                  <mat-checkbox (change)="$event ? toggleAllRows() : null"
-                                [checked]="selection.hasValue() && isAllSelected()"
-                                [indeterminate]="selection.hasValue() && !isAllSelected()"
-                                aria-label="Zaznacz wszystkie">
-                  </mat-checkbox>
-                </th>
-                <td mat-cell *matCellDef="let row">
-                  <mat-checkbox (click)="$event.stopPropagation()"
-                                (change)="$event ? selection.toggle(row) : null"
-                                [checked]="selection.isSelected(row)"
-                                [aria-label]="'Wybierz paczkę ' + row.id">
-                  </mat-checkbox>
-                </td>
-              </ng-container>
-
-              <!-- ID Column -->
-              <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef> ID </th>
-                <td mat-cell *matCellDef="let row"> {{ row.id }} </td>
-              </ng-container>
-
-              <!-- Name Column -->
-              <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef> Nazwa </th>
-                <td mat-cell *matCellDef="let row"> {{ row.name }} </td>
-              </ng-container>
-
-              <!-- Coords Column -->
-              <ng-container matColumnDef="coords">
-                <th mat-header-cell *matHeaderCellDef> Pozycja </th>
-                <td mat-cell *matCellDef="let row"> ({{ row.x }}, {{ row.y }}) </td>
-              </ng-container>
-
-              <ng-container matColumnDef="inboundId">
-                <th mat-header-cell *matHeaderCellDef> ID zam. przych. </th>
-                <td mat-cell *matCellDef="let row">{{ row.inboundOrderId }} </td>
-              </ng-container>
-
-              <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-                  (click)="selection.toggle(row)"
-                  [class.selected-row]="selection.isSelected(row)">
-              </tr>
+          <div class="table-container yaw-scroll">
+            <table class="yaw-table yaw-table--dark">
+              <thead>
+                <tr>
+                  <!-- Select Checkbox Column -->
+                  <th class="select-cell">
+                    <input type="checkbox" (change)="toggleAllRows()"
+                           [checked]="isAllSelected()"
+                           [indeterminate]="selectedCount() > 0 && !isAllSelected()"
+                           aria-label="Zaznacz wszystkie paczki">
+                  </th>
+                  <!-- ID Column -->
+                  <th>ID</th>
+                  <!-- Name Column -->
+                  <th>Nazwa</th>
+                  <!-- Coords Column -->
+                  <th>Półka</th>
+                  <th>Przyjęto w</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of storedPackages(); track row.id) {
+                  <tr [class.selected-row]="selection.isSelected(row)">
+                    <td class="select-cell">
+                      <input type="checkbox" [id]="'pick-' + row.id" (change)="selection.toggle(row)" [checked]="selection.isSelected(row)">
+                    </td>
+                    <td class="yaw-num"><label [for]="'pick-' + row.id">{{ row.id }}</label></td>
+                    <td><label [for]="'pick-' + row.id">{{ row.name }}</label></td>
+                    <td class="yaw-num nowrap">({{ row.x }}, {{ row.y }})</td>
+                    <td class="yaw-num">#{{ row.inboundOrderId }}</td>
+                  </tr>
+                }
+              </tbody>
             </table>
           </div>
         }
       </div>
 
-      <button matButton="filled" type="submit" class="submit-btn" [disabled]="!outboundForm.valid || outboundPackages.length === 0">
-        Zleć wydanie towaru
+      <button type="submit" class="yaw-btn submit-btn" [disabled]="!outboundForm.valid || selectedCount() === 0">
+        ZLEĆ WYDANIE PACZEK ({{ selectedCount() }})
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
       </button>
     </form>
   }

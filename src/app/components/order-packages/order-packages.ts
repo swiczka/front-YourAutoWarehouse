@@ -1,11 +1,11 @@
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { PackageItemReadDto } from '../../dto/PackageItemReadDto';
 import { PackageItemServiceApi } from '../../api-services/package-item-service-api';
-import { MatTableModule } from '@angular/material/table';
+import { getStatusView } from '../../helpers/status.helpers';
 
 @Component({
   selector: 'app-order-packages',
-  imports: [MatTableModule],
+  imports: [],
   templateUrl: './order-packages.html',
   styleUrl: './order-packages.scss',
 })
@@ -17,7 +17,7 @@ export class OrderPackages {
 
   packageServiceApi = inject(PackageItemServiceApi);
 
-  displayedColumns: string[] = ['ID', 'Nazwa', 'Status', 'Pozycja'];
+  protected readonly statusView = getStatusView;
 
   constructor() {
     effect(() => {

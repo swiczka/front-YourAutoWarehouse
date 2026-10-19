@@ -40,6 +40,7 @@ export class WarehouseMap {
   protected readonly allocatedPackages = this.packageService.allocatedPackages;
   protected readonly sentPackages = this.packageService.sentPackages;
   protected readonly carriedByForklift = this.packageService.carriedByForklift;
+  protected readonly highlightedPackageIds = this.packageService.highlightedPackageIds;
 
   // forklifts standing on (0, 0) are parked in the garage and not drawn on the map
   protected readonly movingForklifts = computed(() =>

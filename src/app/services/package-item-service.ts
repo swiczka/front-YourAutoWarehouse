@@ -21,6 +21,9 @@ export class PackageItemService {
     // package currently on the forks, by forklift id
     carriedByForklift = signal<Map<number, PackageItemReadDto>>(new Map());
 
+    // packages ticked in the outbound order form - highlighted on the map
+    highlightedPackageIds = signal<ReadonlySet<number>>(new Set());
+
     readonly allocatedPackages = computed(() =>
         this.deliveredPackages().filter(pkg => pkg.status === 'ALLOCATED')
     );

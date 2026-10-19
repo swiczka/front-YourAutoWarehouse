@@ -1,45 +1,36 @@
-import { Component, inject, input, signal } from '@angular/core';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { Component, computed, DestroyRef, effect, inject, input, model, signal, untracked } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatTableModule } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { InboundOrderDto } from '../../dto/InboundOrderDto';
 import { OutboundOrderDto } from '../../dto/OutboundOrderDto';
 import { OrderServiceApi } from '../../api-services/order-service-api';
 import { PackageItemService } from '../../services/package-item-service';
 import { PackageItemReadDto } from '../../dto/PackageItemReadDto';
+import { ToastService } from '../../services/toast-service';
 
 export type OrderType = 'Inbound' | 'Outbound';
 
 @Component({
   selector: 'app-order-panel',
-  imports: [
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonToggleModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatTableModule
-  ],
+  imports: [ReactiveFormsModule],
   templateUrl: './order-panel.html',
   styleUrl: './order-panel.scss',
 })
 export class OrderPanel {
-  orderType = signal<OrderType>('Inbound');
+  // two-way bound, so the parent can open the form on a given type
+  orderType = model<OrderType>('Inbound');
 
   orderApiService = inject(OrderServiceApi);
   packageService = inject(PackageItemService);
+  private toast = inject(ToastService);
   readonly layoutId = input.required<number>();
 
   readonly storedPackages = this.packageService.storedPackages;
-  readonly displayedColumns: string[] = ['select', 'id', 'name', 'coords', 'inboundId'];
 
   selection = new SelectionModel<PackageItemReadDto>(true, []);
+  // SelectionModel is not a signal - this mirror lets the template and the map react to it
+  protected readonly selectedIds = signal<number[]>([]);
+  protected readonly selectedCount = computed(() => this.selectedIds().length);
 
   inboundForm = new FormGroup({
     companyId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -58,6 +49,20 @@ export class OrderPanel {
       for (const pkg of this.selection.selected) {
         packageIdsControl.push(new FormControl(pkg.id, { nonNullable: true }));
       }
+      this.selectedIds.set(this.selection.selected.map(pkg => pkg.id));
+    });
+
+    // ticked packages light up on the map, but only while the outbound form is open
+    effect(() => {
+      const ids = this.orderType() === 'Outbound' ? this.selectedIds() : [];
+      this.packageService.highlightedPackageIds.set(new Set(ids));
+    });
+    inject(DestroyRef).onDestroy(() => this.packageService.highlightedPackageIds.set(new Set()));
+
+    // another layout = other packages, so the old ticks must go
+    effect(() => {
+      this.layoutId();
+      untracked(() => this.selection.clear());
     });
   }
 
@@ -70,7 +75,7 @@ export class OrderPanel {
   }
 
   isAllSelected(): boolean {
-    const numSelected = this.selection.selected.length;
+    const numSelected = this.selectedCount();
     const numRows = this.storedPackages().length;
     return numSelected === numRows && numRows > 0;
   }
@@ -103,11 +108,14 @@ export class OrderPanel {
         .subscribe({
           next: (response) => {
             console.log('Order submitted successfully!', response);
+            this.toast.success('DOSTAWA PRZYJĘTA', `${this.orderLabel(response)} · paczki (${dto.packageNames.length}) czekają w strefie dostaw.`);
             this.inboundForm.reset();
+            this.inboundPackages.clear();
             this.selection.clear();
           },
           error: (err) => {
             console.error('Error submitting order:', err);
+            this.toast.error('NIE UDAŁO SIĘ WYSŁAĆ ZLECENIA', 'Serwer nie odpowiada lub odrzucił zlecenie. Spróbuj ponownie.');
           }
         });
     }
@@ -126,13 +134,21 @@ export class OrderPanel {
         .subscribe({
           next: (response) => {
             console.log('Outbound order submitted successfully!', response);
+            this.toast.success('WYDANIE ZLECONE', `${this.orderLabel(response)} · wózki zabiorą paczki (${dto.packageIds.length}) do strefy wydań.`);
             this.outboundForm.reset();
             this.selection.clear();
           },
           error: (err) => {
             console.error('Error submitting outbound order:', err);
+            this.toast.error('NIE UDAŁO SIĘ WYSŁAĆ ZLECENIA', 'Serwer nie odpowiada lub odrzucił zlecenie. Spróbuj ponownie.');
           }
         });
     }
+  }
+
+  // "Zlecenie #22" when the backend returns the new id, plain "Zlecenie" otherwise
+  private orderLabel(response: unknown): string {
+    const hasId = typeof response === 'object' && response !== null && 'id' in response;
+    return hasId ? `Zlecenie #${(response as { id: number }).id}` : 'Zlecenie';
   }
 }

@@ -1,0 +1,12 @@
+<div class="tabs" role="group" aria-label="Widok zleceń">
+    @for (item of tabs; track item.id) {
+        <button type="button" class="tabs__tab" [class.is-active]="tab() === item.id" [attr.aria-pressed]="tab() === item.id" (click)="tab.set(item.id)">{{ item.label }}</button>
+    }
+</div>
+<div class="content">
+    @switch (tab()) {
+        @case ('inbound') { <app-orders-view [layoutId]="layoutId()" orderType="inbound" (orderFirst)="startFirstOrder('Inbound')" /> }
+        @case ('outbound') { <app-orders-view [layoutId]="layoutId()" orderType="outbound" (orderFirst)="startFirstOrder('Outbound')" /> }
+        @case ('new') { <app-order-panel [layoutId]="layoutId()" [(orderType)]="newOrderType" /> }
+    }
+</div>

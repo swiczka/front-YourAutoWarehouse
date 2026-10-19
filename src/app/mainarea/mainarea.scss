@@ -16,37 +16,6 @@
     min-width: 0;
 }
 
-.side__content {
-    padding: 20px 24px 24px;
-}
-
-// three equal tabs separated by black rules
-.tabs {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    border-bottom: var(--yaw-rule);
-}
-
-.tabs__tab {
-    height: 56px;
-    border: none;
-    border-radius: 0;
-    background: transparent;
-    color: var(--yaw-ink);
-    font: 700 13px var(--yaw-font);
-    letter-spacing: 0.5px;
-    cursor: pointer;
-
-    & + & {
-        border-left: var(--yaw-rule);
-    }
-
-    &.is-active {
-        background: var(--yaw-ink);
-        color: var(--yaw-cream);
-    }
-}
-
 .editor {
     padding: 16px;
 }
