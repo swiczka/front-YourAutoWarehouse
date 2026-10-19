@@ -153,8 +153,20 @@ export class LayoutStateService {
   }
 
   updateForkliftNumber(forkliftNumber: number): void {
-    this.forkliftNumber.set(forkliftNumber);
-    this.layoutServiceApi.updateForkliftNumber(forkliftNumber);
+    const layoutId = this.layoutId();
+    if (layoutId === null || forkliftNumber === this.forkliftNumber()) {
+      return;
+    }
+    this.layoutServiceApi.updateForkliftNumber(layoutId, forkliftNumber).subscribe({
+      next: () => {
+        this.forkliftNumber.set(forkliftNumber);
+        this.toast.success('USTAWIENIA ZAPISANE', `Liczba wózków w układzie #${layoutId}: ${forkliftNumber}.`);
+      },
+      error: (err: unknown) => {
+        console.error('Error updating forklift number:', err);
+        this.toast.error('NIE UDAŁO SIĘ ZAPISAĆ', 'Liczba wózków nie została zmieniona. Spróbuj ponownie.');
+      }
+    });
   }
 
   private showLayout(layoutDto: LayoutDto): void {

@@ -45,21 +45,6 @@
 } @else {
 <div class="control-room">
     <section class="hall" aria-label="Hala magazynu">
-        <!-- forklift count moves to the settings dialog in a later phase -->
-        <div class="controls">
-            <div class="controls-group">
-                <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                    <mat-label>Liczba wózków</mat-label>
-                    <input matInput type="number" [min]="minForklift" [max]="maxForklift" [value]="draftForkliftNumber()" (input)="draftForkliftNumber.set(getCorrectForkliftNumber(forkliftInput.valueAsNumber || this.minForklift))" #forkliftInput>
-                </mat-form-field>
-                <button matButton="filled" (click)="confirmForkliftNumber()">
-                    Zatwierdź
-                </button>
-                <button matButton="outlined" (click)="revertForkliftNumber()">
-                    Cofnij zmiany
-                </button>
-            </div>
-        </div>
         <app-hall-header />
         <app-warehouse-map />
     </section>

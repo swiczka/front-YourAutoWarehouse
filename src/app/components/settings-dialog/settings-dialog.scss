@@ -1,0 +1,176 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  width: min(520px, calc(100vw - 32px));
+  background: var(--yaw-cream);
+  color: var(--yaw-ink);
+  border: var(--yaw-rule);
+  box-shadow: var(--yaw-shadow);
+}
+
+.head {
+  display: flex;
+  align-items: stretch;
+  border-bottom: var(--yaw-rule);
+
+  h1 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 28px;
+    letter-spacing: -0.5px;
+  }
+}
+
+.head__text {
+  flex: 1 1 auto;
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.head__layout,
+.hint {
+  font-size: 12px;
+  color: var(--yaw-muted);
+}
+
+.head__close {
+  flex: 0 0 72px;
+  border: none;
+  border-left: var(--yaw-rule);
+  background: transparent;
+  color: var(--yaw-ink);
+  cursor: pointer;
+}
+
+.section {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-bottom: var(--yaw-rule);
+}
+
+// [-] [ 5 ] [+]
+.stepper {
+  display: flex;
+  width: 180px;
+  border: var(--yaw-rule);
+
+  button {
+    flex: 0 0 52px;
+    height: 52px;
+    border: none;
+    background: transparent;
+    color: var(--yaw-ink);
+    font: 700 22px var(--yaw-font);
+    cursor: pointer;
+
+    &:first-child {
+      border-right: var(--yaw-rule);
+    }
+
+    &:last-child {
+      border-left: var(--yaw-rule);
+    }
+
+    &:disabled {
+      color: #b9a585;
+      cursor: not-allowed;
+    }
+  }
+
+  input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: none;
+    background: var(--yaw-cream-2);
+    text-align: center;
+    font-size: 20px;
+    color: var(--yaw-ink);
+  }
+}
+
+.switches {
+  border-bottom: var(--yaw-rule);
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 24px;
+
+  & + & {
+    border-top: 1px solid var(--yaw-ink);
+  }
+}
+
+.switch-row__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.switch-row__title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+// square toggle: knob left = off, knob right + dark track = on
+.switch {
+  flex: 0 0 56px;
+  height: 30px;
+  padding: 0 2px;
+  border: var(--yaw-rule);
+  background: var(--yaw-cream-2);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  cursor: pointer;
+
+  &[aria-checked='true'] {
+    justify-content: flex-end;
+    background: var(--yaw-ink);
+
+    .switch__knob {
+      background: var(--yaw-accent);
+    }
+  }
+}
+
+.switch__knob {
+  width: 22px;
+  height: 22px;
+  background: var(--yaw-ink);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  button {
+    height: 60px;
+    border: none;
+    font: 700 14px var(--yaw-font);
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+}
+
+.actions__cancel {
+  background: transparent;
+  color: var(--yaw-ink);
+}
+
+.actions__save {
+  background: var(--yaw-ink);
+  color: var(--yaw-cream);
+}

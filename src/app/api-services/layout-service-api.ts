@@ -5,12 +5,15 @@ import { LayoutDto } from '../dto/LayoutDto';
 import { LayoutIdDto } from '../dto/LayoutIdDto';
 @Service()
 export class LayoutServiceApi {
-    updateForkliftNumber(newForkliftNumber: number) {
-      console.log(`updating forklift number: ${newForkliftNumber}`)
-    }
-
     private http = inject(HttpClient);
     private readonly apiName = 'warehouse';
+
+    // PATCH /warehouse/layout/{id}/forklift?forkliftNumber=N (backend accepts 1..12)
+    updateForkliftNumber(layoutId: number, newForkliftNumber: number) {
+        return this.http.patch<LayoutDto>(`/${this.apiName}/layout/${layoutId}/forklift`, null, {
+            params: { forkliftNumber: newForkliftNumber }
+        });
+    }
 
     postNewLayout(newLayout: Map<string, GridCellData>) {
         const layoutArray = Array.from(newLayout.entries())

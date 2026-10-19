@@ -7,6 +7,14 @@
 @use '_theme-colors.scss' as *;
 @use 'styles/tokens';
 @use 'styles/ui';
+@use '@angular/cdk' as cdk;
+
+// positioning + backdrop styles for CDK Dialog (settings modal)
+@include cdk.overlay();
+
+.yaw-backdrop {
+  background: rgba(17, 17, 17, 0.45);
+}
 
 html {
   height: 100%;

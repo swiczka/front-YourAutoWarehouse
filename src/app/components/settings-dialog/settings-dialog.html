@@ -1,0 +1,51 @@
+<div class="head">
+    <div class="head__text">
+        <h1 id="settings-title">USTAWIENIA</h1>
+        @if (this.layoutId(); as layoutId) {
+            <span class="head__layout">Układ #{{ layoutId }}</span>
+        }
+    </div>
+    <button type="button" class="head__close" (click)="cancel()" aria-label="Zamknij ustawienia">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+</div>
+
+@if (layoutId()) {
+    <div class="section">
+        <label for="forklift-count" class="yaw-label">Liczba wózków</label>
+        <div class="stepper">
+            <button type="button" (click)="changeForkliftCount(-1)" [disabled]="forkliftCount() <= minForklifts" aria-label="Mniej wózków">−</button>
+            <input id="forklift-count" class="yaw-num" type="text" inputmode="numeric" [value]="forkliftCount()"
+                (change)="setForkliftCountFromText(countInput.value)" #countInput>
+            <button type="button" (click)="changeForkliftCount(1)" [disabled]="forkliftCount() >= maxForklifts" aria-label="Więcej wózków">+</button>
+        </div>
+        <span class="hint">Od {{ minForklifts }} do {{ maxForklifts }}. Nowe wózki startują z garażu.</span>
+    </div>
+}
+
+<div class="switches">
+    <div class="switch-row">
+        <div class="switch-row__text">
+            <span id="coords-label" class="switch-row__title">Współrzędne pól</span>
+            <span class="hint">Tryb debugowania mapy</span>
+        </div>
+        <button type="button" role="switch" class="switch" [attr.aria-checked]="showCoordinates()" aria-labelledby="coords-label"
+            (click)="showCoordinates.set(!showCoordinates())"><span class="switch__knob"></span></button>
+    </div>
+    <div class="switch-row">
+        <div class="switch-row__text">
+            <span id="feed-label" class="switch-row__title">Lokalizacje wózków w zdarzeniach</span>
+            <span class="hint">Pokazuj forklift.location-updated w strumieniu</span>
+        </div>
+        <button type="button" role="switch" class="switch" [attr.aria-checked]="showForkliftLocations()" aria-labelledby="feed-label"
+            (click)="showForkliftLocations.set(!showForkliftLocations())"><span class="switch__knob"></span></button>
+    </div>
+</div>
+
+<div class="actions">
+    <button type="button" class="actions__cancel" (click)="cancel()">ANULUJ</button>
+    <button type="button" class="actions__save" (click)="save()">
+        ZAPISZ
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+    </button>
+</div>

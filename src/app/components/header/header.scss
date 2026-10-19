@@ -122,3 +122,16 @@
   background: var(--yaw-ink);
   color: var(--yaw-cream);
 }
+
+.settings {
+  flex: 0 0 64px;
+  min-height: 64px;
+  border: none;
+  border-left: var(--yaw-rule);
+  background: transparent;
+  color: var(--yaw-ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

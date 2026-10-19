@@ -1,4 +1,4 @@
-import { Component, signal, computed, OnInit, OnDestroy, inject, linkedSignal } from '@angular/core';
+import { Component, signal, computed, OnInit, OnDestroy, inject } from '@angular/core';
 import { EditGridCell } from './editgridcell/editgridcell';
 import { Coordinate, Direction } from '../helpers/grid.helpers';
 import { EditGridService } from '../services/edit-grid-service';
@@ -36,19 +36,12 @@ export class Mainarea implements OnInit, OnDestroy{
   readonly sizeX = this.layoutState.sizeX;
   readonly sizeY = this.layoutState.sizeY;
   readonly layoutId = this.layoutState.layoutId;
-  readonly forkliftNumber = this.layoutState.forkliftNumber;
   readonly drawingModeEnabled = this.layoutState.drawingModeEnabled;
-
-  // resets to the saved value whenever another layout is loaded
-  draftForkliftNumber = linkedSignal(() => this.forkliftNumber());
 
   editModeEnabled = signal(false);
 
   minSize : number= 6;
   maxSize : number= 12;
-
-  minForklift : number = 1;
-  maxForklift : number = 12;
 
   gridWidthPx = computed(() => this.sizeX() * GRID_CONFIG.editGridCellSizePx);
   gridHeightPx = computed(() => this.sizeY() * GRID_CONFIG.editGridCellSizePx);
@@ -75,22 +68,11 @@ export class Mainarea implements OnInit, OnDestroy{
     return Math.max(this.minSize, Math.min(this.maxSize, size));
   }
 
-  getCorrectForkliftNumber(forkliftNumber: number): number {
-    return Math.max(this.minForklift, Math.min(this.maxForklift, forkliftNumber));
-  }
-
   handleGridExpansion(request: { origin: Coordinate, direction: Direction}){
     this.editGridService.addCell(request.origin, request.direction);
   }
 
   confirmLayout() {
     this.layoutState.saveDrawnLayout();
-  }
-
-    revertForkliftNumber() {
-    this.draftForkliftNumber.set(this.forkliftNumber());
-  }
-    confirmForkliftNumber() {
-    this.layoutState.updateForkliftNumber(this.draftForkliftNumber());
   }
 }
