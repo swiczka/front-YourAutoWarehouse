@@ -28,6 +28,11 @@
   width: 10px;
   height: 10px;
   border: 1.5px solid var(--yaw-ink);
+
+  // forklift that has not reported yet: color unknown, drawn as an empty square
+  &--unknown {
+    background: transparent;
+  }
 }
 
 .forklift {

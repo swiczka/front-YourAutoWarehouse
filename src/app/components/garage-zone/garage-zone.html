@@ -3,8 +3,8 @@
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 20V9l9-5 9 5v11"></path><path d="M7 20v-6h10v6"></path><path d="M7 17h10"></path></svg>
   GARAŻ
   <span class="swatches" aria-hidden="true">
-    @for (forklift of forklifts(); track forklift.id) {
-      <span class="swatch" [style.background]="forklift.color"></span>
+    @for (forklift of forklifts(); track $index) {
+      <span class="swatch" [class.swatch--unknown]="forklift.color === null" [style.background]="forklift.color"></span>
     }
   </span>
 </button>
@@ -17,12 +17,12 @@
           <tr><th>Wózek</th><th>Status</th></tr>
         </thead>
         <tbody>
-          @for (forklift of forklifts(); track forklift.id) {
+          @for (forklift of forklifts(); track $index) {
             <tr>
               <td>
                 <span class="forklift">
-                  <span class="swatch" [style.background]="forklift.color"></span>
-                  <span class="yaw-num">#{{ forklift.id }}</span>
+                  <span class="swatch" [class.swatch--unknown]="forklift.color === null" [style.background]="forklift.color"></span>
+                  <span class="yaw-num">#{{ forklift.id ?? '—' }}</span>
                 </span>
               </td>
               <td><span class="yaw-chip yaw-chip--tan">DOSTĘPNY</span></td>

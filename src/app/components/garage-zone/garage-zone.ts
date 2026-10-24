@@ -12,12 +12,13 @@ import { getForkliftColor } from '../../config/forklift.config';
   },
 })
 export class GarageZone {
-  // ids of forklifts parked in the garage (available for new tasks)
-  forkliftIds = input.required<number[]>();
+  // forklifts parked in the garage (available for new tasks);
+  // null = a forklift that has not reported yet, so its id (and color) is unknown
+  forkliftIds = input.required<(number | null)[]>();
   open = input(false);
   toggle = output<void>();
 
   protected readonly forklifts = computed(() =>
-    this.forkliftIds().map(id => ({ id, color: getForkliftColor(id) }))
+    this.forkliftIds().map(id => ({ id, color: id === null ? null : getForkliftColor(id) }))
   );
 }

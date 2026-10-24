@@ -47,16 +47,21 @@ export class WarehouseMap {
     [...this.forkliftService.forklifts().values()].filter(forklift => !(forklift.x === 0 && forklift.y === 0))
   );
 
-  // forklift ids are 1..forkliftNumber; every one that is not driving is in the garage
+  // The backend numbers forklifts with one counter shared by all layouts, so ids are not
+  // 1..forkliftNumber (a second layout may get 6..10). The garage therefore holds:
+  // forklifts that reported (0, 0) - known ids - plus the ones that have not reported
+  // anything yet (null = id unknown until their first move).
+  // When the number of forklifts goes down, api-forklift removes the newest idle ones
+  // (highest ids), so only the lowest parked ids are kept here.
   protected readonly garageForkliftIds = computed(() => {
-    const moving = new Set(this.movingForklifts().map(forklift => forklift.id));
-    const ids: number[] = [];
-    for (let id = 1; id <= this.layoutState.forkliftNumber(); id++) {
-      if (!moving.has(id)) {
-        ids.push(id);
-      }
-    }
-    return ids;
+    const garageCount = Math.max(0, this.layoutState.forkliftNumber() - this.movingForklifts().length);
+    const parkedIds: (number | null)[] = [...this.forkliftService.forklifts().values()]
+      .filter(forklift => forklift.x === 0 && forklift.y === 0)
+      .map(forklift => forklift.id)
+      .sort((a, b) => a - b)
+      .slice(0, garageCount);
+    const notReportedYet = garageCount - parkedIds.length;
+    return [...parkedIds, ...Array<null>(notReportedYet).fill(null)];
   });
 
   // closes whatever is open when another layout is loaded

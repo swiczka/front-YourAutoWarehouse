@@ -1,59 +1,68 @@
-# FrontYourAutoWarehouse
+# YourAutoWarehouse – Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.6.
+**Angular client for [YourAutoWarehouse](https://github.com/swiczka/YourAutoWarehouse)**, a simulated automated warehouse. Design a warehouse on a grid, place orders, and watch forklifts move packages live.
 
-## Development server
+| Layout editor |
+|---|
+| ![Editor](docs/drawing.gif) |
 
-To start a local development server, run:
+| Simulation |
+|---|
+| ![Editor](docs/demo.gif) |
 
-```bash
-ng serve
-```
+![Angular](https://img.shields.io/badge/Angular-22-DD0031)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6)
+![RxStomp](https://img.shields.io/badge/WebSocket-STOMP-555)
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## Features
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- **Grid layout editor** – draw roads and set allowed driving directions per cell. Shelves are placed automatically next to roads. Save multiple layouts and switch between them.
+- **Interactive zones** – delivery zone for incoming packages and sending zone showing dispatched ones.
+- **Orders** – create inbound and outbound orders and track the status of every package.
+- **Live forklifts** – positions arrive over WebSocket (STOMP) and are rendered on the grid. Each forklift has its own color.
+- **Package details** – click a package to see its status and location.
 
-```bash
-ng generate component component-name
-```
+## Tech stack
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- **Angular 22** (standalone components), TypeScript*, SCSS
+- **Angular Material**
+- **RxJS** and **@stomp/rx-stomp** for reactive WebSocket subscriptions
+- HTTP interceptor adding a per-browser `X-Guest-Id`, generated once and kept in `localStorage`
 
-```bash
-ng generate --help
-```
+## Getting started
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+**Requirements:** Node.js 20+ and the [backend](https://github.com/swiczka/YourAutoWarehouse) running on `localhost:8080` (`docker compose up`).
 
 ```bash
-ng test
+git clone https://github.com/swiczka/front-YourAutoWarehouse.git
+cd front-YourAutoWarehouse
+npm install
+npm start
 ```
 
-## Running end-to-end tests
+Open http://localhost:4200. In development, requests to `/api` are proxied to the gateway on port 8080 (`src/proxy.conf.json`), and the WebSocket connects to `ws://127.0.0.1:8080/ws`.
 
-For end-to-end (e2e) testing, run:
+## Project structure
 
-```bash
-ng e2e
+```
+src/app/
+├── mainarea/        # warehouse grid: view and edit modes (gridcell, editgridcell)
+├── components/      # forklift, delivery-zone, sending-zone, order-panel,
+│                    # orders-view, order-packages, package-popup, header
+├── services/        # grid, edit-grid, forklift and package state
+├── api-services/    # REST clients for the backend
+├── stomp/           # RxStomp configuration and subscriptions
+├── api/             # HTTP interceptor (X-Guest-Id)
+├── dto/ events/     # types shared with the backend
+└── config/          # e.g. forklift colors
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Roadmap
 
-## Additional Resources
+- [ ] Move the WebSocket URL to `environment.ts`
+- [ ] Dockerfile and integration with the backend's `docker compose`
+- [ ] Component tests for the editor and order flow
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+**Author:** Damian Świeca · [GitHub](https://github.com/swiczka)

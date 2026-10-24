@@ -170,6 +170,40 @@
   box-shadow: var(--yaw-shadow);
 }
 
+// Scrollbars in the house style: square black thumb on a light cream track.
+// Chrome / Edge / Safari use the ::-webkit-scrollbar pseudo-elements (full control
+// over size and look); Firefox does not know them and gets the standard
+// scrollbar-color / scrollbar-width properties instead.
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--yaw-cream-2);
+}
+
+// the cream border makes the black thumb look like a block sitting inside the track
+::-webkit-scrollbar-thumb {
+  background: var(--yaw-ink);
+  border: 3px solid var(--yaw-cream-2);
+
+  &:hover {
+    background: var(--yaw-accent);
+  }
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--yaw-cream-2);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-color: var(--yaw-ink) var(--yaw-cream-2);
+    scrollbar-width: thin;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

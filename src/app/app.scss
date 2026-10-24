@@ -1,3 +1,20 @@
+// header on top, main fills the rest of the window, so the page's black
+// dividing lines run down to the bottom edge even when content is short
+:host {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 main {
     padding: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+app-mainarea {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
 }

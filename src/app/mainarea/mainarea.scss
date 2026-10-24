@@ -1,3 +1,8 @@
+// editor / control room stretch to the bottom of the window
+.page {
+    flex: 1 1 auto;
+}
+
 // control room: map on the left, orders on the right; stacks on narrow screens
 .control-room {
     display: flex;
